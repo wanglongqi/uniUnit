@@ -18,7 +18,7 @@ Here is some examples:
 	# 100000.0 [g]
 
 
-Oh, why would some need something like this. Fine, how about following example?
+Oh, why would someone need something like this. Fine, how about following example?
 
 
 	myunit.to_unit(J)
@@ -73,7 +73,12 @@ Noted:
 
 
 	myunit3.to_unit(9.8 * m/s**2)
-	# 9.8e-12 [Long/Flash2]
+	#  9.8e-12 [Long/Flash2]
+
+Before, you start you may want to know some silly problems in the package like:
+
+- `1 [T]` is not `1000 [kg]`, but `1 Tesla` instead.
+- `in` is a reserved word for Python, and cannot be a unit.
 
 ## Pre-request
 [unum](https://pypi.python.org/pypi/Unum) - You can install it by `easy_install unum`
