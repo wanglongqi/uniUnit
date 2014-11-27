@@ -1,7 +1,7 @@
 uniUnit
 =======
 
-Provide consistent units for calculation. [Syntax highlighted version of this page is here](https://wanglongqi.github.io/uniunit/2014/11/27/uniunit/).
+Provide consistent units for calculation. [Syntax highlighted version of this page is here](https://wanglongqi.github.io/uniunit/2014/11/27/uniunitreadme/).
 
 In FEM and other similar simulation techniques, keeping consistent units is a tedious work and almost everyone made this kind of mistake one or two times. Therefore, here I propose a package for dealing with this problem once for all.
 
@@ -75,13 +75,6 @@ Noted:
 	myunit3.to_unit(9.8 * m/s**2)
 	# 9.8e-12 [Long/Flash2]
 
-
-Before, you start you may want to know some silly problems in the package like:
-
-- `1 [T]` is not `1000 [kg]`, but `1 Tesla` instead.
-
-
-Pre-request
-============
+## Pre-request
 [unum](https://pypi.python.org/pypi/Unum) - You can install it by `easy_install unum`
 
