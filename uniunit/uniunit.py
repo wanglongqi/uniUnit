@@ -7,7 +7,7 @@ Consistent units manager.
 get_base_unit
 	return units in seven basic units system
 
-Uniunit
+uniUnit
 	main class for conversion between systems of units
 	get_new_unit(uin): get the corresponding units of `uin`
 						in new system of units.
@@ -43,7 +43,7 @@ def get_base_unit(inu):
 		base_unit = inu._unit
 	return base_unit
 
-class Uniunit(object):
+class uniUnit(object):
 	def __init__(self,udict):
 		self._udict = udict
 

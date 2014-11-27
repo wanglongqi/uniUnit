@@ -12,7 +12,7 @@ Read README.md for more information.
 
 __version__ = '0.1'
 
-from uniunit import Uniunit, get_base_unit
+from uniunit import uniUnit, get_base_unit
 from unum.units import *
 import unum
 
