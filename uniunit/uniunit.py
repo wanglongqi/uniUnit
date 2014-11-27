@@ -14,6 +14,9 @@ uniUnit
 	to_unit(uin): return the value of `uin` in new system 
 						of units.
 
+Update 2014-11-28:
+	At support to to_unit for iterators like list, tuple 
+	and numpy.ndarray.
 
 :Author: WANG Longqi <iqgnol@gmail.com>
 :Date: 2014-11-27
@@ -24,23 +27,20 @@ import unum
 def get_base_unit(inu):
 	'return unit of `inu` represented by seven basic units.'
 	base_unit = {}
-	if inu.maxLevel():
-		for u, exp in list(inu._unit.items()):
-			new_u = inu._unitTable[u][0]
-			if new_u is None:
-				if u in base_unit.keys():
-					base_unit[u] += exp
-				else:
-					base_unit[u] = exp
+	for u, exp in list(inu._unit.items()):
+		new_u = inu._unitTable[u][0]
+		if new_u is None:
+			if u in base_unit.keys():
+				base_unit[u] += exp
 			else:
-				bu = get_base_unit(new_u)
-				for key in bu.keys():
-					if key in base_unit.keys():
-						base_unit[key] += bu[key]
-					else:
-						base_unit[key] = bu[key]
-	else:
-		base_unit = inu._unit
+				base_unit[u] = exp
+		else:
+			bu = get_base_unit(new_u)
+			for key in bu.keys():
+				if key in base_unit.keys():
+					base_unit[key] += bu[key]
+				else:
+					base_unit[key] = bu[key]
 	return base_unit
 
 class uniUnit(object):
@@ -55,6 +55,8 @@ class uniUnit(object):
 		return unum.Unum(new_unit)
 
 	def to_unit(self,uin):
+		if hasattr(uin,'__iter__'):
+			return map(self.to_unit,uin)
 		new_unit=self.get_new_unit(uin)
 		return uin.asUnit(new_unit)
 
