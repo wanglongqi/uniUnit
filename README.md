@@ -1,7 +1,7 @@
 uniUnit
 =======
 
-Provide consistent units for calculation.
+Provide consistent units for calculation. [Syntax highlighted version of this page is here](https://wanglongqi.github.io/uniunit/2014/11/27/uniunit/).
 
 In FEM and other similar simulation techniques, keeping consistent units is a tedious work and almost everyone made this kind of mistake one or two times. Therefore, here I propose a package for dealing with this problem once for all.
 
@@ -9,52 +9,51 @@ The idea of the package is simple, you tell me what is the system of units you w
 
 Here is some examples:
 
-{% highlight python %}
-from uniunit import *
-conv_dict = {'kg':'g','m':'mm','s':'s',
-			'A':'mA','K':'K','mol':'mol','cd':'cd'}
-myunit = uniUnit(conv_dict)
+	from uniunit import *
+	conv_dict = {'kg':'g','m':'mm','s':'s',
+				'A':'mA','K':'K','mol':'mol','cd':'cd'}
+	myunit = uniUnit(conv_dict)
 
-myunit.to_unit(100 * kg)
-# 100000.0 [g]
-{% endhighlight %}
+	myunit.to_unit(100 * kg)
+	# 100000.0 [g]
+
 
 Oh, why would some need something like this. Fine, how about following example?
 
-{% highlight python %}
-myunit.to_unit(J)
-# 1000000000.0 [g.mm2/s2]
 
-myunit.to_unit(W/m/m)
-# 1000.0 [g/mm0.s3]
+	myunit.to_unit(J)
+	# 1000000000.0 [g.mm2/s2]
 
-W/m/m == kg/s/s/s
-# True
-{% endhighlight %}
+	myunit.to_unit(W/m/m)
+	# 1000.0 [g/mm0.s3]
+
+	W/m/m == kg/s/s/s
+	# True
+
 
 Or if you are specialist in nano-science, you may need these quantity in `nm`
 
-{% highlight python %}
-conv_dict = {'kg':'ug','m':'nm','s':'ps',
-			'A':'mA','K':'K','mol':'mol','cd':'cd'}
-myunit1 = uniUnit(conv_dict)
 
-myunit1.to_unit(2E11*Pa)
-# 2e-13 [ug/nm.ps2]
-{% endhighlight %}
+	conv_dict = {'kg':'ug','m':'nm','s':'ps',
+				'A':'mA','K':'K','mol':'mol','cd':'cd'}
+	myunit1 = uniUnit(conv_dict)
+
+	myunit1.to_unit(2E11*Pa)
+	# 2e-13 [ug/nm.ps2]
+
 
 Is it also so easy for you? Then, how about not in SI? Try to figure out `1 W/m/m` is how many quantity in system of units like `pound, inch, min`.
 
-{% highlight python %}
-conv_dict = {'kg':'pound','m':'inch','s':'min'}
-myunit2 = uniUnit(conv_dict)
 
-myunit2.to_unit(W/m/m)
-# 476198.486319 [pound/inch0.min3]
+	conv_dict = {'kg':'pound','m':'inch','s':'min'}
+	myunit2 = uniUnit(conv_dict)
 
-1*W/m/m - 476198.486319*pound/min**3
-#  7.04547531427e-13 [W/m2]
-{% endhighlight %}
+	myunit2.to_unit(W/m/m)
+	# 476198.486319 [pound/inch0.min3]
+
+	1*W/m/m - 476198.486319*pound/min**3
+	#  7.04547531427e-13 [W/m2]
+
 
 Noted: 
 
@@ -62,22 +61,19 @@ Noted:
 - However, you need provide all units you will use in future conversion, since no default value is given for the conversion dictionary.
 - You can use you user define unit in the conversion, too. Here is an example.
 
-{% highlight python %}
-Long = unum.Unum.unit('Long',1000*km)
-Flash = unum.Unum.unit('Flash',1*ms)
 
-conv_dict = {'m':'Long','s':'Flash'}
+	Long = unum.Unum.unit('Long',1000*km)
+	Flash = unum.Unum.unit('Flash',1*ms)
 
-myunit3 = uniUnit(conv_dict)
+	conv_dict = {'m':'Long','s':'Flash'}
 
-myunit3.to_unit(m)
-# 1e-06 [Long]
+	myunit3 = uniUnit(conv_dict)
 
-myunit3.to_unit(9.8 * m/s**2)
-# 9.8e-12 [Long/Flash2]
+	myunit3.to_unit(m)
 
-{% endhighlight %}
 
+	myunit3.to_unit(9.8 * m/s**2)
+	# 9.8e-12 [Long/Flash2]
 
 
 Before, you start you may want to know some silly problems in the package like:
