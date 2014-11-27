@@ -59,8 +59,9 @@ Noted:
 
 - You do not need to provide the whole conversion dictionary, as in last example, only units corresponding to `kg`, `m` and `s` are provided. 
 - However, you need provide all units you will use in future conversion, since no default value is given for the conversion dictionary.
-- You can use you user define unit in the conversion, too. Here is an example.
+- You can use you user define unit in the conversion, too. 
 
+Here is an example.
 
 	Long = unum.Unum.unit('Long',1000*km)
 	Flash = unum.Unum.unit('Flash',1*ms)
@@ -71,9 +72,8 @@ Noted:
 
 	myunit3.to_unit(m)
 
-
 	myunit3.to_unit(9.8 * m/s**2)
-	#  9.8e-12 [Long/Flash2]
+	# 9.8e-12 [Long/Flash2]
 
 Before, you start you may want to know some silly problems in the package like:
 
@@ -83,3 +83,12 @@ Before, you start you may want to know some silly problems in the package like:
 ## Pre-request
 [unum](https://pypi.python.org/pypi/Unum) - You can install it by `easy_install unum`
 
+## To-Do
+Here I list some possible extensions for this package:
+
+- Graphic interface: Personally, prefer Qt based GUI.
+- Numpy and list support: May be a necessary extension, not so sure.
+- Units simplification: May be interesting, have some thoughts on it but not that clear.
+- Add more predefined units: I think it is useful, may be will be added into the package later.
+- Add tests to the package: some simple tests are used in development, but nose may be not a good idea. Test system is definitely needed in the package.
+- Documentation: may be not, simple packages like this one need documentation? I think readme page and [site posts](https://wanglongqi.github.io/uniUnit/) is enough.
