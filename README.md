@@ -1,6 +1,6 @@
 uniUnit
 =======
-uniUnit still under developing, please send your comments on the [post pages](https://wanglongqi.github.io/uniunit/).
+uniUnit still under developing, please send your comments on the [post pages](https://wanglongqi.github.io/uniUnit/).
 ![uniUnit](https://wanglongqi.github.io/public/images/uniUnit.png)
 
 Provide consistent units for calculation. [Syntax highlighted version of this page is here](https://wanglongqi.github.io/uniunit/2014/11/27/uniunitreadme/).
