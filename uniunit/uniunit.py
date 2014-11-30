@@ -38,9 +38,9 @@ def get_base_unit(inu):
 			bu = get_base_unit(new_u)
 			for key in bu.keys():
 				if key in base_unit.keys():
-					base_unit[key] += bu[key]
+					base_unit[key] += bu[key]*exp
 				else:
-					base_unit[key] = bu[key]
+					base_unit[key] = bu[key]*exp
 	return base_unit
 
 class uniUnit(object):

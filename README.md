@@ -1,5 +1,6 @@
 uniUnit
 =======
+uniUnit still under developing, please send your comments on the [post pages](https://wanglongqi.github.io/uniUnit/).
 ![uniUnit](https://wanglongqi.github.io/public/images/uniUnit.png)
 
 Provide consistent units for calculation. [Syntax highlighted version of this page is here](https://wanglongqi.github.io/uniunit/2014/11/27/uniunitreadme/).
@@ -91,5 +92,5 @@ Here I list some possible extensions for this package:
 - Numpy and list support: May be a necessary extension, not so sure.
 - Units simplification: May be interesting, have some thoughts on it but not that clear.
 - Add more predefined units: I think it is useful, may be will be added into the package later.
-- Add tests to the package: some simple tests are used in development, but nose may be not a good idea. Test system is definitely needed in the package.
+- Add tests to the package: some simple tests are used in development, but nose may be not a good idea. Test system is definitely needed in the package. (Direct test code has added as in `tests.py`)
 - Documentation: may be not, simple packages like this one need documentation? I think readme page and [site posts](https://wanglongqi.github.io/uniUnit/) are enough.
