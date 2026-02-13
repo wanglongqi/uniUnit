@@ -102,6 +102,11 @@ u = uniUnit({'m': '米', 'kg': '千克', 's': '秒'})
 
 u.to_unit(1 * unit.km)            # 1000.0 米
 u.to_unit(1000 * unit.g)         # 1.0 千克
+
+# Extended Chinese units
+u2 = uniUnit({'m': '公分', 's': '刻钟'})
+u2.to_unit(1 * unit.m)           # 100.0 centimeter
+u2.to_unit(1 * unit.hour)        # 4.0 15 * minute
 ```
 
 #### 6. Light-Based Distance Units
@@ -133,6 +138,21 @@ print(result)  # [1000. 2000. 3000.] gram
 values = [1, 2, 3] * unit.kg
 result = u.to_unit(values)
 print(result)  # [1000. 2000. 3000.] gram
+```
+
+#### 8. Performance Optimization
+
+The library includes internal caching for repeated conversions:
+
+```python
+u = uniUnit({'m': 'mm', 'kg': 'g', 's': 'ms'})
+
+# First call computes and caches
+result1 = u.to_unit(1 * unit.m)
+
+# Subsequent calls use cache
+result2 = u.to_unit(1 * unit.kg)
+result3 = u.to_unit(1 * unit.s)
 ```
 
 ### More Use Cases

@@ -22,39 +22,11 @@ Functions:
 from __future__ import annotations
 
 import pint
+from functools import lru_cache
 from typing import Dict, Any, Union, List, Tuple, Optional
 
 ureg = pint.UnitRegistry()
 Quantity = pint.Quantity
-
-# Create short aliases for common units
-# Users can use: kg, g, m, s, etc. directly
-_common_units = [
-    'm', 's', 'kg', 'g', 'A', 'K', 'mol', 'cd',
-    'Hz', 'N', 'Pa', 'J', 'W', 'V', 'F', 'ohm', 'S', 'T', 'Wb', 'H',
-    'rad', 'sr', 'L', 'C', 'Bq', 'Gy', 'Sv',
-    'km', 'cm', 'mm', 'um', 'nm', 'pm', 'fm', 'dm',
-    'mg', 'ug', 'na', 'na',
-    'ms', 'us', 'ns', 'ps',
-    'mA', 'uA', 'nA', 'pA',
-    'mV', 'uV', 'kV', 'MV',
-    'mF', 'uF', 'nF', 'pF',
-    'mH', 'uH',
-    'mS', 'uS',
-    'kJ', 'MJ', 'GJ', 'kW', 'MW', 'GW',
-    'kPa', 'MPa', 'GPa', 'kN', 'MN',
-    'mol', 'mmol', 'kmol',
-    'Hz', 'kHz', 'MHz', 'GHz',
-    'mL', 'uL',
-    'knot', 'lb', 'oz', 'mph',
-    'min', 'h', 'd', 'wk', 'yr',
-    'atm', 'bar', 'Torr', 'psi',
-    'cal', 'kcal', 'eV', 'keV', 'MeV', 'GeV', 'Wh', 'kWh',
-    'hp',
-    'in', 'ft', 'yd', 'mi', 'nmi',
-    'gal', 'qt', 'pt', 'cup', 'fl_oz',
-    'ac', 'ha',
-]
 
 # Add custom units to the registry
 ureg.define('light_second = 299792458 * meter = ls')
@@ -78,7 +50,8 @@ CHINESE_UNITS = {
     '丈': 'zhang',
     '尺': 'chi',
     '寸': 'cun',
-    '分': 'fen',
+    '分长度': 'fen',
+    '公分': 'centimeter',
     
     # Mass
     '千克': 'kilogram',
@@ -91,7 +64,8 @@ CHINESE_UNITS = {
     
     # Time
     '秒': 'second',
-    '分': 'minute',
+    '分钟': 'minute',
+    '刻钟': '15 * minute',
     '时': 'hour',
     '天': 'day',
     '周': 'week',
@@ -137,8 +111,8 @@ CHINESE_UNITS = {
     
     # Temperature
     '开': 'kelvin',
-    '摄氏度': 'degree_Celsius',
-    '华氏度': 'degree_Fahrenheit',
+    '摄氏度': 'degC',
+    '华氏度': 'degF',
     
     # Electric
     '安': 'ampere',
@@ -481,20 +455,34 @@ class uniUnit:
             Only base units used in conversions need to be provided.
             Missing units will use SI base units.
         """
-        # Normalize keys to dimension names, keep values as-is
         self._udict = {}
         for key, value in udict.items():
-            # Convert short key to dimension
             dim = SHORT_TO_DIMENSION.get(key, key)
-            # Try to find dimension if key is already a dimension
             if dim.startswith('['):
                 self._udict[dim] = value
             else:
                 self._udict[dim] = value
         self._ureg = ureg
+        self._target_unit_cache = {}
     
     def __repr__(self) -> str:
         return f"uniUnit({self._udict})"
+    
+    def _get_target_unit(self, dims_tuple: tuple) -> pint.Unit:
+        """
+        Internal cached function: compute target unit from dimension tuple.
+        dims_tuple format: (('[length]', 1), ('[time]', -2))
+        """
+        if dims_tuple in self._target_unit_cache:
+            return self._target_unit_cache[dims_tuple]
+        
+        res_unit = self._ureg.dimensionless
+        for dim, exp in dims_tuple:
+            target_str = self._udict.get(dim, DIMENSION_TO_SHORT.get(dim, dim.strip('[]')))
+            res_unit *= self._ureg(target_str) ** exp
+        
+        self._target_unit_cache[dims_tuple] = res_unit
+        return res_unit
     
     def get_new_unit(self, uin: Union[pint.Quantity, pint.Unit]) -> pint.Unit:
         """
@@ -511,28 +499,8 @@ class uniUnit:
         else:
             dims = dict(uin.dimensionality)
         
-        new_unit_parts = []
-        for dim, exp in dims.items():
-            if exp == 0:
-                continue
-            
-            # Get target unit from dict, use short name if possible
-            if dim in self._udict:
-                target = self._udict[dim]
-            else:
-                # Try to find a short name for this dimension
-                target = DIMENSION_TO_SHORT.get(dim, str(dim).strip('[]'))
-            
-            if exp == 1:
-                new_unit_parts.append(target)
-            else:
-                new_unit_parts.append(f"{target}**{exp}")
-        
-        if not new_unit_parts:
-            return self._ureg.dimensionless
-        
-        unit_str = ' * '.join(new_unit_parts)
-        return self._ureg.parse_expression(unit_str)
+        dims_tuple = tuple(sorted(dims.items()))
+        return self._get_target_unit(dims_tuple)
     
     def to_unit(self, uin: Union[pint.Quantity, List, Tuple, float, int]) -> Union[pint.Quantity, List]:
         """

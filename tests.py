@@ -511,8 +511,8 @@ class TestChineseUnits(unittest.TestCase):
         self.assertAlmostEqual(result.magnitude, 60, places=1)
     
     def test_minute_chinese(self):
-        """Test 分 (minute)."""
-        u = uniUnit({'second': '分'})
+        """Test 分钟 (minute)."""
+        u = uniUnit({'second': '分钟'})
         result = u.to_unit(1 * ureg.hour)
         self.assertAlmostEqual(result.magnitude, 60, places=1)
     
