@@ -1,96 +1,435 @@
-uniUnit
-=======
-uniUnit still under developing, please send your comments on the [post pages](https://wanglongqi.github.io/uniUnit/).
-![uniUnit](https://wanglongqi.github.io/public/images/uniUnit.png)
+# uniUnit
 
-Provide consistent units for calculation. [Syntax highlighted version of this page is here](https://wanglongqi.github.io/uniunit/2014/11/27/uniunitreadme/).
+[English](#english) | [中文](#中文)
 
-In FEM and other similar simulation techniques, keeping consistent units is a tedious work and almost everyone made this kind of mistake one or two times. Therefore, here I propose a package for dealing with this problem once for all.
+---
 
-The idea of the package is simple, you tell me what is the system of units you want. Then, tell me the correct number in any system of units. All is done! The package will try to print out the value in you specified system of units.
+## English
 
-Here is some examples:
+### What is uniUnit?
 
-	from uniunit import *
-	conv_dict = {'kg':'g','m':'mm','s':'s',
-				'A':'mA','K':'K','mol':'mol','cd':'cd'}
-	myunit = uniUnit(conv_dict)
+uniUnit is a simple Python library for converting between different unit systems effortlessly. It's especially useful for engineering calculations and simulations (like FEM) where maintaining unit consistency is crucial.
 
-	myunit.to_unit(100 * kg)
-	# 100000.0 [g]
+### Installation
 
+```bash
+pip install pint
+```
 
-Oh, why would someone need something like this. Fine, how about following example?
+### Quick Start
 
+```python
+from uniunit import unit, uniUnit
 
-	myunit.to_unit(J)
-	# 1000000000.0 [g.mm2/s2]
+# Define target unit system: mm-g-s
+conv = {'m': 'mm', 'kg': 'g', 's': 's'}
+u = uniUnit(conv)
 
-	myunit.to_unit(W/m/m)
-	# 1000.0 [g/mm0.s3]
+# Convert 100 kg to grams
+u.to_unit(100 * unit.kg)  # 100000.0 gram
+```
 
-	W/m/m == kg/s/s/s
-	# True
+### Core Features
 
+#### 1. Basic Unit Conversion
 
-Or if you are specialist in nano-science, you may need these quantity in `nm`
+```python
+from uniunit import unit, uniUnit
 
+# Convert to mm-g-s system
+u = uniUnit({'m': 'mm', 'kg': 'g', 's': 's'})
 
-	conv_dict = {'kg':'ug','m':'nm','s':'ps',
-				'A':'mA','K':'K','mol':'mol','cd':'cd'}
-	myunit1 = uniUnit(conv_dict)
+# 100 kg → grams
+u.to_unit(100 * unit.kg)        # 100000.0 gram
 
-	myunit1.to_unit(2E11*Pa)
-	# 2e-13 [ug/nm.ps2]
+# 1 Joule → g·mm²/s²
+u.to_unit(1 * unit.J)           # 1000000000.0 gram * millimeter ** 2 / second ** 2
 
+# 1 Pascal → g/(mm·s²)
+u.to_unit(1 * unit.Pa)          # 1.0 gram / millimeter / second ** 2
+```
 
-Is it also so easy for you? Then, how about not in SI? Try to figure out `1 W/m/m` is how many quantity in system of units like `pound, inch, min`.
+#### 2. Nano-Science Units
 
+For nano-science researchers:
 
-	conv_dict = {'kg':'pound','m':'inch','s':'min'}
-	myunit2 = uniUnit(conv_dict)
+```python
+# nm-μg-ps system
+u = uniUnit({'m': 'nm', 'kg': 'ug', 's': 'ps'})
 
-	myunit2.to_unit(W/m/m)
-	# 476198.486319 [pound/inch0.min3]
+# 2×10¹¹ Pa → μg/(nm·ps²)
+u.to_unit(2e11 * unit.Pa)       # 2e-13 microgram / nanometer / picosecond ** 2
+```
 
-	1*W/m/m - 476198.486319*pound/min**3
-	#  7.04547531427e-13 [W/m2]
+#### 3. Imperial Units
 
+Convert to British/imperial units:
 
-Noted: 
+```python
+# pound-inch-minute system
+u = uniUnit({'m': 'inch', 'kg': 'pound', 's': 'min'})
 
-- You do not need to provide the whole conversion dictionary, as in last example, only units corresponding to `kg`, `m` and `s` are provided. 
-- However, you need provide all units you will use in future conversion, since no default value is given for the conversion dictionary.
-- You can use you user define unit in the conversion, too. 
+# 1 W/m² → pound/(inch·min³)
+u.to_unit(unit('1 W/m^2'))       # 476198.4863193356 pound / minute ** 3
+```
 
-Here is an example.
+#### 4. Built-in Presets
 
-	Long = unum.Unum.unit('Long',1000*km)
-	Flash = unum.Unum.unit('Flash',1*ms)
+One-line unit system switching:
 
-	conv_dict = {'m':'Long','s':'Flash'}
+```python
+from uniunit import quick_convert, UnitSystem
 
-	myunit3 = uniUnit(conv_dict)
+# Quick conversion
+quick_convert(100 * unit.kg, 'SI', 'CGS')     # 1000.0 gram
+quick_convert(1 * unit.m, 'SI', 'Imperial')     # 39.37 inch
 
-	myunit3.to_unit(m)
+# Use presets
+cgs = UnitSystem.get_preset('CGS')
+cgs.to_unit(1 * unit.kg)          # 1000.0 gram
+cgs.to_unit(1 * unit.m)           # 100.0 centimeter
+```
 
-	myunit3.to_unit(9.8 * m/s**2)
-	# 9.8e-12 [Long/Flash2]
+**Available presets**: `SI`, `MKS`, `CGS`, `mmkgms`, `mmgms`, `nm_ug_ps`, `Imperial`, `FPS`, `British`
 
-Before, you start you may want to know some silly problems in the package like:
+#### 5. Chinese Units Support
 
-- `1 [T]` is not `1000 [kg]`, but `1 Tesla` instead.
-- `in` is a reserved word for Python, and cannot be a unit.
+Use Chinese unit names directly:
 
-## Pre-request
-[unum](https://pypi.python.org/pypi/Unum) - You can install it by `easy_install unum`
+```python
+# Chinese units
+u = uniUnit({'m': '米', 'kg': '千克', 's': '秒'})
 
-## To-Do
-Here I list some possible extensions for this package:
+u.to_unit(1 * unit.km)            # 1000.0 米
+u.to_unit(1000 * unit.g)         # 1.0 千克
+```
 
-- Graphic interface: Personally, prefer Qt based GUI.
-- Numpy and list support: May be a necessary extension, not so sure.
-- Units simplification: May be interesting, have some thoughts on it but not that clear.
-- Add more predefined units: I think it is useful, may be will be added into the package later.
-- Add tests to the package: some simple tests are used in development, but nose may be not a good idea. Test system is definitely needed in the package. (Direct test code has added as in `tests.py`)
-- Documentation: may be not, simple packages like this one need documentation? I think readme page and [site posts](https://wanglongqi.github.io/uniUnit/) are enough.
+#### 6. Light-Based Distance Units
+
+Astronomical units based on speed of light:
+
+```python
+u = uniUnit({'m': 'm'})
+u.to_unit(1 * unit.light_second)   # 299792458 meter
+u.to_unit(1 * unit.light_minute)   # 17987547480 meter
+```
+
+#### 7. NumPy Support
+
+Batch conversion for arrays:
+
+```python
+import numpy as np
+from uniunit import unit, uniUnit
+
+u = uniUnit({'m': 'mm', 'kg': 'g', 's': 's'})
+
+# Convert NumPy arrays
+distances = np.array([1, 2, 3]) * unit.m
+result = u.to_unit(distances)
+print(result)  # [1000. 2000. 3000.] gram
+
+# Works with lists too
+values = [1, 2, 3] * unit.kg
+result = u.to_unit(values)
+print(result)  # [1000. 2000. 3000.] gram
+```
+
+### More Use Cases
+
+#### FEM Simulation
+
+```python
+from uniunit import unit, uniUnit, UnitSystem
+
+# Common FEM unit system: mm-kg-ms
+fem = UnitSystem.get_preset('mmkgms')
+
+# Convert simulation results
+pressure = fem.to_unit(1000 * unit.Pa)
+# 0.001 kilogram / millimeter / millisecond ** 2
+
+velocity = fem.to_unit(50 * unit.m / unit.s)
+# 50.0 millimeter / millisecond
+
+acceleration = fem.to_unit(9.8 * unit.m / unit.s**2)
+# 9.8e-3 millimeter / millisecond ** 2
+```
+
+#### Custom Unit Systems
+
+```python
+from uniunit import ureg, uniUnit
+
+# Define custom units
+ureg.define('Long = 1000 * kilometer')  # Custom length
+ureg.define('Flash = 1 * millisecond')    # Custom time
+
+# Use in conversion
+u = uniUnit({'m': 'Long', 's': 'Flash'})
+u.to_unit(9.8 * unit.m / unit.s**2)
+# 9.8e-12 Long / Flash ** 2
+```
+
+#### Multi-Physics Calculations
+
+```python
+# Mechanical + Thermal
+u = uniUnit({'m': 'cm', 'kg': 'g', 's': 's', 'K': 'K'})
+
+# Stress
+stress = u.to_unit(100 * unit.Pa)  # 1000.0 gram / centimeter / second ** 2
+
+# Thermal conductivity
+k = u.to_unit(150 * unit.W / unit.m / unit.K)
+# 15000000.0 gram * centimeter / second ** 3 / kelvin
+```
+
+### Helper Functions
+
+```python
+from uniunit import get_base_unit, get_unit_info, check_unit_compatibility
+
+# Get base dimensions
+get_base_unit(unit.Pa)
+# {'[mass]': 1, '[length]': -1, '[time]': -2}
+
+# Get detailed unit info
+get_unit_info(100 * unit.kg)
+# {'magnitude': 100, 'units': 'kilogram', 'base_units': {'[mass]': 1}, ...}
+
+# Check compatibility
+check_unit_compatibility(unit.kg, unit.g)   # True
+check_unit_compatibility(unit.kg, unit.m)    # False
+```
+
+### Unit Access Methods
+
+```python
+from uniunit import unit, ureg
+
+# Method 1: unit prefix (recommended)
+unit.kg, unit.m, unit.s, unit.J
+
+# Method 2: ureg
+ureg.kg, ureg.m, ureg.s
+
+# Method 3: string
+unit('100 kg'), unit('50 m/s')
+```
+
+---
+
+## 中文
+
+### uniUnit 是什么？
+
+uniUnit 是一个简洁的 Python 单位转换库，帮助你在不同单位制之间轻松转换。特别适用于工程计算和仿真（如 FEM），保持单位一致性非常重要。
+
+### 安装
+
+```bash
+pip install pint
+```
+
+### 快速开始
+
+```python
+from uniunit import unit, uniUnit
+
+# 定义目标单位制: 毫米-克-秒
+conv = {'m': 'mm', 'kg': 'g', 's': 's'}
+u = uniUnit(conv)
+
+# 转换 100 kg → grams
+u.to_unit(100 * unit.kg)  # 100000.0 gram
+```
+
+### 核心功能
+
+#### 1. 基本单位转换
+
+```python
+from uniunit import unit, uniUnit
+
+# 转换为毫米-克-秒单位制
+u = uniUnit({'m': 'mm', 'kg': 'g', 's': 's'})
+
+# 100 kg → grams
+u.to_unit(100 * unit.kg)        # 100000.0 gram
+
+# 1 Joule → g·mm²/s²
+u.to_unit(1 * unit.J)           # 1000000000.0 gram * millimeter ** 2 / second ** 2
+
+# 1 Pascal → g/(mm·s²)
+u.to_unit(1 * unit.Pa)          # 1.0 gram / millimeter / second ** 2
+```
+
+#### 2. 纳米科学单位
+
+纳米科学研究人员常用：
+
+```python
+# 纳米-微克-皮秒单位制
+u = uniUnit({'m': 'nm', 'kg': 'ug', 's': 'ps'})
+
+# 2×10¹¹ Pa → μg/(nm·ps²)
+u.to_unit(2e11 * unit.Pa)       # 2e-13 microgram / nanometer / picosecond ** 2
+```
+
+#### 3. 英制单位
+
+转换为英制单位：
+
+```python
+# 磅-英寸-分钟单位制
+u = uniUnit({'m': 'inch', 'kg': 'pound', 's': 'min'})
+
+# 1 W/m² → pound/(inch·min³)
+u.to_unit(unit('1 W/m^2'))       # 476198.4863193356 pound / minute ** 3
+```
+
+#### 4. 预设单位制
+
+内置常用单位制，一行切换：
+
+```python
+from uniunit import quick_convert, UnitSystem
+
+# 快速转换
+quick_convert(100 * unit.kg, 'SI', 'CGS')     # 1000.0 gram
+quick_convert(1 * unit.m, 'SI', 'Imperial')     # 39.37 inch
+
+# 使用预设
+cgs = UnitSystem.get_preset('CGS')
+cgs.to_unit(1 * unit.kg)          # 1000.0 gram
+cgs.to_unit(1 * unit.m)           # 100.0 centimeter
+```
+
+**可用预设**: `SI`, `MKS`, `CGS`, `mmkgms`, `mmgms`, `nm_ug_ps`, `Imperial`, `FPS`, `British`
+
+#### 5. 中文单位支持
+
+支持直接使用中文单位：
+
+```python
+# 使用中文单位
+u = uniUnit({'m': '米', 'kg': '千克', 's': '秒'})
+
+u.to_unit(1 * unit.km)            # 1000.0 米
+u.to_unit(1000 * unit.g)         # 1.0 千克
+```
+
+#### 6. 光时单位
+
+基于光速的天文距离单位：
+
+```python
+u = uniUnit({'m': 'm'})
+u.to_unit(1 * unit.light_second)   # 299792458 meter
+u.to_unit(1 * unit.light_minute)   # 17987547480 meter
+```
+
+#### 7. NumPy 支持
+
+批量转换数组：
+
+```python
+import numpy as np
+from uniunit import unit, uniUnit
+
+u = uniUnit({'m': 'mm', 'kg': 'g', 's': 's'})
+
+# 转换 NumPy 数组
+distances = np.array([1, 2, 3]) * unit.m
+result = u.to_unit(distances)
+print(result)  # [1000. 2000. 3000.] gram
+
+# 列表也可以
+values = [1, 2, 3] * unit.kg
+result = u.to_unit(values)
+print(result)  # [1000. 2000. 3000.] gram
+```
+
+### 更多使用场景
+
+#### FEM 仿真
+
+```python
+from uniunit import unit, uniUnit, UnitSystem
+
+# 常用 FEM 单位制: mm-kg-ms
+fem = UnitSystem.get_preset('mmkgms')
+
+# 转换仿真结果
+pressure = fem.to_unit(1000 * unit.Pa)
+# 0.001 kilogram / millimeter / millisecond ** 2
+
+velocity = fem.to_unit(50 * unit.m / unit.s)
+# 50.0 millimeter / millisecond
+
+acceleration = fem.to_unit(9.8 * unit.m / unit.s**2)
+# 9.8e-3 millimeter / millisecond ** 2
+```
+
+#### 自定义单位系统
+
+```python
+from uniunit import ureg, uniUnit
+
+# 定义自定义单位
+ureg.define('Long = 1000 * kilometer')  # 自定义长度
+ureg.define('Flash = 1 * millisecond')   # 自定义时间
+
+# 在转换中使用
+u = uniUnit({'m': 'Long', 's': 'Flash'})
+u.to_unit(9.8 * unit.m / unit.s**2)
+# 9.8e-12 Long / Flash ** 2
+```
+
+#### 多物理场计算
+
+```python
+# 机械 + 热力学
+u = uniUnit({'m': 'cm', 'kg': 'g', 's': 's', 'K': 'K'})
+
+# 应力
+stress = u.to_unit(100 * unit.Pa)  # 1000.0 gram / centimeter / second ** 2
+
+# 热导率
+k = u.to_unit(150 * unit.W / unit.m / unit.K)
+# 15000000.0 gram * centimeter / second ** 3 / kelvin
+```
+
+### 辅助函数
+
+```python
+from uniunit import get_base_unit, get_unit_info, check_unit_compatibility
+
+# 获取基本维度
+get_base_unit(unit.Pa)
+# {'[mass]': 1, '[length]': -1, '[time]': -2}
+
+# 获取单位详细信息
+get_unit_info(100 * unit.kg)
+# {'magnitude': 100, 'units': 'kilogram', 'base_units': {'[mass]': 1}, ...}
+
+# 检查兼容性
+check_unit_compatibility(unit.kg, unit.g)   # True
+check_unit_compatibility(unit.kg, unit.m)    # False
+```
+
+### 单位访问方式
+
+```python
+from uniunit import unit, ureg
+
+# 方式1: unit 前缀 (推荐)
+unit.kg, unit.m, unit.s, unit.J
+
+# 方式2: ureg
+ureg.kg, ureg.m, ureg.s
+
+# 方式3: 字符串
+unit('100 kg'), unit('50 m/s')
+```
