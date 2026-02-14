@@ -591,7 +591,7 @@ def create_custom_unit(
 
 
 def quick_convert(
-    value: Union[float, pint.Quantity],
+    value: Union[float, pint.Quantity, str],
     from_system: Union[str, UnitSystem],
     to_system: Union[str, UnitSystem]
 ) -> pint.Quantity:
@@ -599,7 +599,7 @@ def quick_convert(
     Quickly convert between two unit systems.
     
     Args:
-        value: Value to convert
+        value: Value to convert (can be string like '100 kg', Quantity, or number)
         from_system: Source unit system (name or UnitSystem)
         to_system: Target unit system (name or UnitSystem)
         
@@ -608,11 +608,15 @@ def quick_convert(
         
     Example:
         >>> quick_convert(100 * ureg.kg, 'SI', 'CGS')
+        >>> quick_convert('100 kg', 'SI', 'CGS')
     """
     if isinstance(from_system, str):
         from_system = UnitSystem.get_preset(from_system)
     if isinstance(to_system, str):
         to_system = UnitSystem.get_preset(to_system)
+    
+    if isinstance(value, str):
+        value = ureg(value)
     
     si_value = from_system.to_unit(value)
     return to_system.to_unit(si_value)

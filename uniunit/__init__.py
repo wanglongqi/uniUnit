@@ -33,6 +33,7 @@ from .uniunit import (
     get_unit_info,
     UnitSystem,
     to_unit,
+    CHINESE_UNITS,
 )
 
 __all__ = [
@@ -51,4 +52,5 @@ __all__ = [
     'get_unit_info',
     'UnitSystem',
     'to_unit',
+    'CHINESE_UNITS',
 ]
