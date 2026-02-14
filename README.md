@@ -453,3 +453,107 @@ ureg.kg, ureg.m, ureg.s
 # 方式3: 字符串
 unit('100 kg'), unit('50 m/s')
 ```
+
+---
+
+## API Reference | API 参考
+
+### 1. Unit Conversion | 单位转换
+
+```python
+from uniunit import uniUnit, convert_value
+
+# 使用 uniUnit 类
+u = uniUnit({'kg': 'g', 'm': 'mm', 's': 's'})
+u.to_unit(100 * ureg.kg)           # 100000.0 gram
+u.to_unit(1 * ureg.m)              # 1000.0 millimeter
+
+# 快速转换
+convert_value(100, 'km', 'm')      # 100000.0
+```
+
+### 2. Unit System | 单位系统
+
+```python
+from uniunit import UnitSystem, quick_convert
+
+# 使用预设单位制
+si = UnitSystem.get_preset('SI')
+cgs = UnitSystem.get_preset('CGS')
+
+si.to_unit(1 * ureg.kg)            # 1.0 kilogram
+cgs.to_unit(1 * ureg.kg)           # 1000.0 gram
+
+# 快速转换
+quick_convert('100 kg', 'SI', 'CGS')  # 100000.0 gram
+quick_convert('1 hour', 'SI', 'CGS')  # 3600.0 gram * centimeter / second
+
+# 预设列表
+UnitSystem.list_presets()  # ['SI', 'MKS', 'CGS', 'mmkgms', 'mmgms', 'nm_ug_ps', 'Imperial', 'FPS', 'British']
+```
+
+### 3. Unit Access | 单位访问
+
+```python
+from uniunit import unit, ureg
+
+# unit 前缀 (推荐)
+unit.kg, unit.m, unit.s, unit.J, unit.Pa
+unit('100 kg'), unit('50 m/s')
+
+# ureg 直接访问
+ureg.kg, ureg.m, ureg('100 km')
+```
+
+### 4. Utility Functions | 工具函数
+
+```python
+from uniunit import get_base_unit, get_unit_info, check_unit_compatibility
+
+# 获取基本维度
+get_base_unit(ureg.Pa)              # {'[mass]': 1, '[length]': -1, '[time]': -2}
+
+# 获取单位详细信息
+get_unit_info(100 * ureg.kg)        # {'magnitude': 100, 'units': 'kilogram', ...}
+
+# 检查兼容性
+check_unit_compatibility(ureg.kg, ureg.g)   # True
+check_unit_compatibility(ureg.kg, ureg.m)    # False
+
+# 创建自定义单位
+from uniunit import create_custom_unit
+create_custom_unit('Long', 1000 * ureg.km)
+```
+
+### 5. Chinese Units | 中文单位
+
+```python
+from uniunit import CHINESE_UNITS, unit
+
+# 支持的中文单位
+unit.米, unit.千克, unit.秒
+unit.毫米, unit.纳米
+unit.摄氏度, unit.华氏度
+
+# 在转换中使用
+u = uniUnit({'m': '米', 'kg': '千克', 's': '秒'})
+u.to_unit(1 * unit.km)             # 1000.0 米
+u.to_unit(1000 * unit.g)            # 1.0 千克
+```
+
+### Module Exports | 模块导出
+
+| Export | Description |
+|--------|-------------|
+| `ureg` | Pint UnitRegistry |
+| `unit` | Unit shortcut class |
+| `Quantity` | Pint Quantity |
+| `uniUnit` | Main conversion class |
+| `UnitSystem` | Unit system preset class |
+| `convert_value` | Quick value conversion |
+| `quick_convert` | Convert between presets |
+| `get_base_unit` | Get SI base dimensions |
+| `get_unit_info` | Get detailed unit info |
+| `check_unit_compatibility` | Check if units compatible |
+| `CHINESE_UNITS` | Chinese unit name mappings |
+
