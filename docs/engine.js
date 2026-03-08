@@ -34,6 +34,14 @@ window.toggleTheme = () => {
   setTheme(current === 'dark' ? 'light' : 'dark');
 };
 
+window.swapUnits = () => {
+  const fromInput = document.getElementById('simpleFrom');
+  const toInput = document.getElementById('simpleTo');
+  const temp = fromInput.value;
+  fromInput.value = toInput.value;
+  toInput.value = temp;
+};
+
 initTheme();
 
 const UNIT_KB = [

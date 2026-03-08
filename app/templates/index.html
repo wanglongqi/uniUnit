@@ -427,6 +427,14 @@
             lucide.createIcons();
         }
 
+        window.swapUnits = function() {
+            const fromInput = document.getElementById('simpleFrom');
+            const toInput = document.getElementById('simpleTo');
+            const temp = fromInput.value;
+            fromInput.value = toInput.value;
+            toInput.value = temp;
+        };
+
         function setupAuto(inputId, listId) {
             const input = document.getElementById(inputId);
             const list = document.getElementById(listId);
