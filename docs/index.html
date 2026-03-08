@@ -348,23 +348,184 @@
 			} catch (e) { showError(res, 'Browser Failure', e.message); }
 		}
 
-		class UniUnitSystem {
-			constructor(unitsDict) { this.unitsDict = unitsDict; }
-			convert(input) {
-				const u = math.unit(input);
-				const dims = u.dimensions;
-				const targetUnits = { mass: this.unitsDict.kg || 'kg', length: this.unitsDict.m || 'm', time: this.unitsDict.s || 's' };
-				const dimNames = ['mass', 'length', 'time'];
-				let targetUnitStr = "";
-				for (let i = 0; i < 3; i++) {
-					const exp = dims[i];
-					if (exp === 0) continue;
-					const unit = targetUnits[dimNames[i]];
-					targetUnitStr += (targetUnitStr ? "*" : "") + (exp === 1 ? unit : `${unit}^${exp}`);
-				}
-				return u.to(targetUnitStr || '1');
-			}
-		}
+class UniUnitSystem {
+ constructor(unitsDict) { this.unitsDict = this.normalizeDict(unitsDict); }
+
+ normalizeDict(dict) {
+ const aliases = { 'kilogram': 'kg', 'gram': 'g', 'meter': 'm', 'millimeter': 'mm', 'centimeter': 'cm', 'kilometer': 'km', 'second': 's', 'millisecond': 'ms', 'minute': 'min', 'hour': 'h', 'pound': 'lb', 'inch': 'in', 'foot': 'ft' };
+ const result = {};
+ for (let [k, v] of Object.entries(dict)) {
+ const nk = (aliases[k.toLowerCase()] || k).toLowerCase();
+ const nv = (aliases[v.toLowerCase()] || v).toLowerCase();
+ result[nk] = nv;
+ }
+ return result;
+ }
+
+ convert(input) {
+ const match = input.trim().match(/^([\d.+-]+(?:[eE][+-]?\d+)?)\s+(.+)$/);
+ if (!match) throw new Error('Invalid format. Use: "100 N"');
+ const value = parseFloat(match[1]);
+ const unitStr = match[2].trim();
+ 
+ let unit;
+ try {
+ unit = math.unit(value, unitStr);
+ } catch (e) {
+ throw new Error(`Unknown unit: ${unitStr}`);
+ }
+ 
+ const dims = unit.dimensions;
+ const dimNames = ['mass', 'length', 'time', 'current', 'temperature', 'amount', 'luminous', 'angle', 'solid_angle'];
+ const dimMap = {};
+ for (let i = 0; i < dims.length; i++) { if (dims[i] !== 0) dimMap[dimNames[i]] = dims[i]; }
+
+ const targetUnits = {
+ mass: this.unitsDict['kg'] || 'kg',
+ length: this.unitsDict['m'] || 'm',
+ time: this.unitsDict['s'] || 's',
+ current: this.unitsDict['a'] || 'A',
+ temperature: this.unitsDict['k'] || 'K',
+ amount: this.unitsDict['mol'] || 'mol',
+ luminous: this.unitsDict['cd'] || 'cd'
+ };
+
+ const numerators = [], denominators = [];
+ for (let [dim, exp] of Object.entries(dimMap)) {
+ const tu = targetUnits[dim];
+ if (!tu) continue;
+ if (exp === 1) numerators.push(tu);
+ else if (exp === -1) denominators.push(tu);
+ else if (exp > 0) numerators.push(`${tu}^${exp}`);
+ else denominators.push(`${tu}^${-exp}`);
+ }
+ let targetUnitStr = numerators.join('*');
+ if (denominators.length > 0) targetUnitStr += '/' + denominators.join('*');
+
+ const siUnits = {mass: 'kg', length: 'm', time: 's', current: 'A', temperature: 'K', amount: 'mol', luminous: 'cd'};
+ const unitToSi = {
+ kg: 1, g: 0.001, mg: 1e-6, ug: 1e-9, lb: 0.45359237, oz: 0.028349523, ton: 907.18474, tonne: 1000,
+ m: 1, mm: 0.001, cm: 0.01, km: 1000, um: 1e-6, nm: 1e-9, in: 0.0254, ft: 0.3048, yd: 0.9144, mi: 1609.344,
+ s: 1, ms: 0.001, us: 1e-6, ns: 1e-9, ps: 1e-12, min: 60, h: 3600, d: 86400,
+ A: 1, mA: 0.001, kA: 1000, K: 1, mol: 1, mmol: 0.001, kmol: 1000, cd: 1
+ };
+
+ let valueInSiBase = value;
+ try {
+ const siUnit = unit.toSI();
+ valueInSiBase = siUnit.value;
+ } catch (e) {
+ const inputUnitLower = unitStr.toLowerCase();
+ if (unitToSi[inputUnitLower] !== undefined) {
+ const inputUnitBaseSiValue = unitToSi[inputUnitLower];
+ let simpleFactor = 1;
+ for (let [dim, exp] of Object.entries(dimMap)) {
+ simpleFactor *= Math.pow(inputUnitBaseSiValue, exp);
+ }
+ valueInSiBase = value * simpleFactor;
+ }
+ }
+
+ let factor = 1;
+ for (let [dim, exp] of Object.entries(dimMap)) {
+ const siUnit = siUnits[dim];
+ const targetUnit = targetUnits[dim];
+ if (!siUnit || !targetUnit) continue;
+ const siFactor = 1;
+ const targetFactor = unitToSi[targetUnit] || 1;
+ const dimFactor = siFactor / targetFactor;
+ factor *= Math.pow(dimFactor, exp);
+ }
+
+ const resultValue = valueInSiBase * factor;
+ return {
+ value: resultValue,
+ unit: targetUnitStr,
+ magnitude: resultValue,
+ units: targetUnitStr,
+ toString: () => `${resultValue} ${targetUnitStr}`
+ };
+ }
+}
+ return result;
+ }
+
+ convert(input) {
+ const match = input.trim().match(/^([\d.+-]+(?:[eE][+-]?\d+)?)\s+(.+)$/);
+ if (!match) throw new Error('Invalid format. Use: "100 N"');
+ const value = parseFloat(match[1]);
+ const unitStr = match[2].trim();
+ const unit = math.unit(value, unitStr);
+ const dims = unit.dimensions;
+ const dimNames = ['mass', 'length', 'time', 'current', 'temperature', 'amount', 'luminous', 'angle', 'solid_angle'];
+ const dimMap = {};
+ for (let i = 0; i < dims.length; i++) { if (dims[i] !== 0) dimMap[dimNames[i]] = dims[i]; }
+
+ const targetUnits = {
+ mass: this.unitsDict['kg'] || 'kg',
+ length: this.unitsDict['m'] || 'm',
+ time: this.unitsDict['s'] || 's',
+ current: this.unitsDict['a'] || 'A',
+ temperature: this.unitsDict['k'] || 'K',
+ amount: this.unitsDict['mol'] || 'mol',
+ luminous: this.unitsDict['cd'] || 'cd'
+ };
+
+ const numerators = [], denominators = [];
+ for (let [dim, exp] of Object.entries(dimMap)) {
+ const tu = targetUnits[dim];
+ if (!tu) continue;
+ if (exp === 1) numerators.push(tu);
+ else if (exp === -1) denominators.push(tu);
+ else if (exp > 0) numerators.push(`${tu}^${exp}`);
+ else denominators.push(`${tu}^${-exp}`);
+ }
+ let targetUnitStr = numerators.join('*');
+ if (denominators.length > 0) targetUnitStr += '/' + denominators.join('*');
+
+ const siUnits = {mass: 'kg', length: 'm', time: 's', current: 'A', temperature: 'K', amount: 'mol', luminous: 'cd'};
+ const unitToSi = {
+ kg: 1, g: 0.001, mg: 1e-6, ug: 1e-9, lb: 0.45359237, oz: 0.028349523, ton: 907.18474, tonne: 1000,
+ m: 1, mm: 0.001, cm: 0.01, km: 1000, um: 1e-6, nm: 1e-9, in: 0.0254, ft: 0.3048, yd: 0.9144, mi: 1609.344,
+ s: 1, ms: 0.001, us: 1e-6, ns: 1e-9, ps: 1e-12, min: 60, h: 3600, d: 86400,
+ A: 1, mA: 0.001, kA: 1000, K: 1, mol: 1, mmol: 0.001, kmol: 1000, cd: 1
+ };
+
+ const siBaseUnits = {mass: 'kg', length: 'm', time: 's', current: 'A', temperature: 'K', amount: 'mol', luminous: 'cd'};
+ const siBaseToUnit = {kg: 1, g: 1000, mg: 1e6, ug: 1e9, lb: 2.20462, m: 1, mm: 1000, cm: 100, km: 0.001, s: 1, ms: 1000, A: 1, K: 1, mol: 1};
+
+ let valueInSi = value;
+ const inputUnitLower = unitStr.toLowerCase();
+ if (unitToSi[inputUnitLower] !== undefined) {
+ const inputUnitBaseSiValue = unitToSi[inputUnitLower];
+ let simpleFactor = 1;
+ for (let [dim, exp] of Object.entries(dimMap)) {
+ simpleFactor *= Math.pow(inputUnitBaseSiValue, exp);
+ }
+ valueInSi = value * simpleFactor;
+ }
+
+ let factor = 1;
+ for (let [dim, exp] of Object.entries(dimMap)) {
+ const siUnit = siUnits[dim];
+ const targetUnit = targetUnits[dim];
+ if (!siUnit || !targetUnit) continue;
+ const siFactor = 1;
+ const targetFactor = unitToSi[targetUnit] || 1;
+ const dimFactor = siFactor / targetFactor;
+ factor *= Math.pow(dimFactor, exp);
+ }
+
+ const resultValue = valueInSi * factor;
+ return {
+ value: resultValue,
+ unit: targetUnitStr,
+ magnitude: resultValue,
+ units: targetUnitStr,
+ toString: () => `${resultValue} ${targetUnitStr}`
+ };
+ }
+}
 
 		function systemConvert() {
 			const v = document.getElementById('systemValue').value;
