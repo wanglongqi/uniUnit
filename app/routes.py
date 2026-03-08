@@ -83,19 +83,19 @@ async def convert_with_system(request: UnitSystemRequest):
         return {
             "value": request.value,
             "units": request.units,
-            "result": format_quantity(result)
+            "result": f"{result:~}"
         }
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
 
 def format_quantity(q):
-    """Format quantity with reasonable precision"""
+    """Format quantity with reasonable precision and compact units"""
     mag = q.magnitude
     if abs(mag) < 0.001 or abs(mag) > 10000:
-        return f"{mag:.8g} {q.units}"
+        return f"{mag:.8g} {q.units:~}"
     else:
-        return f"{mag:.5g} {q.units}"
+        return f"{mag:.5g} {q.units:~}"
 
 
 @router.post("/api/quick-convert")

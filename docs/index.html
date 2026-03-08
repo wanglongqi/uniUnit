@@ -299,6 +299,23 @@
 			document.querySelectorAll('.suggestions').forEach(l => l.style.display = 'none');
 		};
 
+		function showError(container, title, message) {
+			const now = new Date().toLocaleTimeString();
+			container.innerHTML = `
+				<div class="result-header">
+					<span>${title}</span>
+					<span style="opacity: 0.5;">${now}</span>
+				</div>
+				<div class="result-error">
+					<div class="result-error-msg">
+						<i data-lucide="alert-circle"></i>
+						<span>${message}</span>
+					</div>
+				</div>`;
+			container.classList.add('show');
+			lucide.createIcons();
+		}
+
 		['simpleFrom', 'simpleTo'].forEach(id => setupAuto(id, 'auto' + id.charAt(0).toUpperCase() + id.slice(1)));
 
 		function simpleConvert() {
@@ -309,6 +326,7 @@
 			const now = new Date().toLocaleTimeString();
 			try {
 				const converted = math.unit(val, from).to(to);
+				const unitInfo = UNIT_KB.find(uk => uk.s === to) || { n: to, d: 'Browser Native Unit' };
 				res.innerHTML = `
 					<div class="result-header">
 						<span>Browser Calculation</span>
@@ -320,9 +338,14 @@
 							<span class="arrow">→</span>
 							<span class="final">${Number(converted.value.toPrecision(10))}</span> <span class="unit">${to}</span>
 						</div>
+						<div class="result-hint">
+							<i data-lucide="info"></i>
+							<span>Description: <b>${unitInfo.n}</b> — ${unitInfo.d}</span>
+						</div>
 					</div>`;
 				res.classList.add('show');
-			} catch (e) { res.innerHTML = `<div style="padding:24px; color:#f43f5e; font-weight:700;">${e.message}</div>`; res.classList.add('show'); }
+				lucide.createIcons();
+			} catch (e) { showError(res, 'Browser Failure', e.message); }
 		}
 
 		class UniUnitSystem {
@@ -360,9 +383,14 @@
 						<div class="result-text">
 							<span class="final">${result.toString()}</span>
 						</div>
+						<div class="result-hint">
+							<i data-lucide="compass"></i>
+							<span>Local Engine Projection: <b>${Object.values(JSON.parse(u)).join('-')}</b></span>
+						</div>
 					</div>`;
 				res.classList.add('show');
-			} catch (e) { res.innerHTML = `<div style="padding:24px; color:#f43f5e; font-weight:700;">${e.message}</div>`; res.classList.add('show'); }
+				lucide.createIcons();
+			} catch (e) { showError(res, 'Projection Mapping Error', e.message); }
 		}
 
 		function presetConvert() {
@@ -383,9 +411,14 @@
 						<div class="result-text">
 							<span class="final">${result.toString()}</span>
 						</div>
+						<div class="result-hint">
+							<i data-lucide="layers"></i>
+							<span>Framework: <b>${to}</b> System</span>
+						</div>
 					</div>`;
 				res.classList.add('show');
-			} catch (e) { res.innerHTML = `<div style="padding:24px; color:#f43f5e; font-weight:700;">${e.message}</div>`; res.classList.add('show'); }
+				lucide.createIcons();
+			} catch (e) { showError(res, 'Framework System Error', e.message); }
 		}
 	</script>
 </body>

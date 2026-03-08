@@ -398,12 +398,23 @@
 
         ['simpleFrom', 'simpleTo'].forEach(id => setupAuto(id, 'auto' + id.charAt(0).toUpperCase() + id.slice(1)));
 
-        function swapUnits() {
-            const f = document.getElementById('simpleFrom');
-            const t = document.getElementById('simpleTo');
-            const temp = f.value;
-            f.value = t.value;
-            t.value = temp;
+
+
+        function showError(container, title, message) {
+            const now = new Date().toLocaleTimeString();
+            container.innerHTML = `
+                <div class="result-header">
+                    <span>${title}</span>
+                    <span style="opacity: 0.5;">${now}</span>
+                </div>
+                <div class="result-error">
+                    <div class="result-error-msg">
+                        <i data-lucide="alert-circle"></i>
+                        <span>${message}</span>
+                    </div>
+                </div>`;
+            container.classList.add('show');
+            lucide.createIcons();
         }
 
         async function simpleConvert() {
@@ -416,6 +427,7 @@
                 const response = await fetch('/api/convert', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ value: parseFloat(v), from_unit: f, to_unit: t }) });
                 const data = await response.json();
                 if (!response.ok) throw new Error(data.detail);
+                const unitInfo = UNIT_KB.find(u => u.s === t) || { n: t, d: 'Dynamic Engine Unit' };
                 res.innerHTML = `
                     <div class="result-header">
                         <span>Scalar Transformation</span>
@@ -428,9 +440,14 @@
                             <span class="final">${data.result.toLocaleString('en-US', { maximumFractionDigits: 10 })}</span> 
                             <span class="unit">${t}</span>
                         </div>
+                        <div class="result-hint">
+                            <i data-lucide="info"></i>
+                            <span>Target Unit: <b>${unitInfo.n}</b> — ${unitInfo.d}</span>
+                        </div>
                     </div>`;
                 res.classList.add('show');
-            } catch (e) { res.innerHTML = `<div style="padding:24px; color:#f43f5e; font-weight:700;">${e.message}</div>`; res.classList.add('show'); }
+                lucide.createIcons();
+            } catch (e) { showError(res, 'Transformation Failed', e.message); }
         }
 
         async function systemConvert() {
@@ -450,9 +467,14 @@
                         <div class="result-text">
                             <span class="final">${data.result}</span>
                         </div>
+                        <div class="result-hint">
+                            <i data-lucide="compass"></i>
+                            <span>Target Framework: <b>${Object.values(JSON.parse(u)).join('-')}</b> Mapping</span>
+                        </div>
                     </div>`;
                 res.classList.add('show');
-            } catch (e) { res.innerHTML = `<div style="padding:24px; color:#f43f5e; font-weight:700;">${e.message}</div>`; res.classList.add('show'); }
+                lucide.createIcons();
+            } catch (e) { showError(res, 'Projection Failed', e.message); }
         }
 
         async function presetConvert() {
@@ -471,9 +493,14 @@
                         <div class="result-text">
                             <span class="final">${data.result}</span>
                         </div>
+                        <div class="result-hint">
+                            <i data-lucide="layers"></i>
+                            <span>Target System: <b>${document.getElementById('presetTo').value}</b> Standards</span>
+                        </div>
                     </div>`;
                 res.classList.add('show');
-            } catch (e) { res.innerHTML = `<div style="padding:24px; color:#f43f5e; font-weight:700;">${e.message}</div>`; res.classList.add('show'); }
+                lucide.createIcons();
+            } catch (e) { showError(res, 'Transition Failed', e.message); }
         }
 
         async function getInfo() {
@@ -500,7 +527,7 @@
                         </div>
                     </div>`;
                 res.classList.add('show');
-            } catch (e) { res.innerHTML = `<div style="padding:24px; color:#f43f5e; font-weight:700;">${e.message}</div>`; res.classList.add('show'); }
+            } catch (e) { showError(res, 'Inspection Failed', e.message); }
         }
     </script>
 </body>

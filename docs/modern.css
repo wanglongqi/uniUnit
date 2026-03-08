@@ -21,7 +21,6 @@
     --text-main: var(--gray-900);
     --text-muted: var(--gray-500);
     --res-bg: #eef4ff;
-    /* Professional tinted light result box */
     --res-text: var(--gray-900);
     --res-border: #d1e9ff;
     --res-header: var(--primary);
@@ -286,16 +285,19 @@ textarea:focus {
     transform: translateY(-1px);
 }
 
-/* Premium Results - Softened */
+/* Professional Calculation Log */
 .result-box {
     margin-top: 40px;
-    padding: 32px;
+    padding: 0;
     border-radius: 12px;
-    background: var(--res-bg);
-    color: var(--res-text);
-    border: 1px solid var(--res-border);
+    background: var(--card-bg);
+    color: var(--text-main);
+    border: 1px solid var(--gray-200);
     display: none;
+    overflow: hidden;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
     transition: all 0.3s;
+    position: relative;
 }
 
 .result-box.show {
@@ -304,22 +306,106 @@ textarea:focus {
 }
 
 .result-header {
-    font-size: 0.75rem;
-    color: var(--res-header);
+    font-size: 0.7rem;
+    color: var(--text-muted);
     text-transform: uppercase;
     letter-spacing: 0.1em;
     font-weight: 700;
-    margin-bottom: 12px;
+    padding: 12px 20px;
+    background: var(--gray-50);
+    border-bottom: 1px solid var(--gray-200);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.result-body {
+    padding: 20px;
 }
 
 .result-text {
-    font-size: 2.25rem;
-    font-weight: 800;
-    letter-spacing: -0.03em;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 4px;
+    word-break: break-all;
 }
 
-.result-text span {
+.result-text .val {
     color: var(--primary);
+}
+
+.result-text .unit {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-weight: 700;
+    align-self: flex-end;
+    margin-bottom: 1px;
+}
+
+.result-text .arrow {
+    opacity: 0.3;
+    margin: 0 4px;
+    font-weight: 400;
+    font-size: 1rem;
+}
+
+.result-text .final {
+    font-size: 1.6rem;
+    font-weight: 900;
+    color: var(--text-main);
+    line-height: 1;
+}
+
+.result-hint {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px dashed var(--gray-200);
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.result-hint i {
+    width: 14px;
+    height: 14px;
+    color: var(--primary);
+    opacity: 0.7;
+}
+
+.result-hint b {
+    color: var(--text-main);
+    font-weight: 600;
+}
+
+
+/* Error Logic in Log */
+.result-error {
+    padding: 32px;
+    background: rgba(244, 63, 94, 0.05);
+    /* Soft red tint */
+    border-left: 4px solid #f43f5e;
+    border-radius: 0 0 12px 12px;
+}
+
+.result-error-msg {
+    color: #e11d48;
+    font-size: 0.95rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.result-error-msg i {
+    width: 20px;
+    height: 20px;
 }
 
 /* Autocomplete */
