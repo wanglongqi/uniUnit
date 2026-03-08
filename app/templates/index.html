@@ -10,34 +10,34 @@
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 20px;
         }
-        
+
         .container {
             max-width: 1024px;
             margin: 0 auto;
         }
-        
+
         header {
             text-align: center;
             color: white;
             margin-bottom: 30px;
         }
-        
+
         header h1 {
             font-size: 2.5em;
             margin-bottom: 10px;
         }
-        
+
         header p {
             opacity: 0.9;
         }
-        
+
         .card {
             background: white;
             border-radius: 16px;
@@ -45,7 +45,7 @@
             margin-bottom: 20px;
             box-shadow: 0 10px 40px rgba(0,0,0,0.1);
         }
-        
+
         .card h2 {
             color: #333;
             margin-bottom: 20px;
@@ -53,19 +53,19 @@
             border-bottom: 2px solid #667eea;
             padding-bottom: 10px;
         }
-        
+
         .form-group {
             margin-bottom: 16px;
         }
-        
+
         label {
             display: block;
             margin-bottom: 6px;
             color: #555;
             font-weight: 500;
         }
-        
-        input, select {
+
+        input, select, textarea {
             width: 100%;
             padding: 12px;
             border: 2px solid #e0e0e0;
@@ -73,23 +73,23 @@
             font-size: 16px;
             transition: border-color 0.3s;
         }
-        
-        input:focus, select:focus {
+
+        input:focus, select:focus, textarea:focus {
             outline: none;
             border-color: #667eea;
         }
-        
+
         .row {
             display: flex;
             gap: 16px;
             flex-wrap: wrap;
         }
-        
+
         .col {
             flex: 1;
             min-width: 150px;
         }
-        
+
         button {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
@@ -102,12 +102,12 @@
             width: 100%;
             transition: transform 0.2s, box-shadow 0.2s;
         }
-        
+
         button:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
         }
-        
+
         .result {
             margin-top: 16px;
             padding: 16px;
@@ -115,31 +115,31 @@
             border-radius: 8px;
             border-left: 4px solid #667eea;
         }
-        
+
         .result .value {
             font-size: 1.5em;
             font-weight: bold;
             color: #667eea;
         }
-        
+
         .error {
             background: #fff5f5;
             border-left-color: #e53e3e;
             color: #c53030;
         }
-        
+
         .tabs-container {
             display: flex;
             gap: 30px;
         }
-        
+
         .tabs-sidebar {
             display: flex;
             flex-direction: column;
             gap: 10px;
             min-width: 180px;
         }
-        
+
         .tab-btn {
             background: #f0f0f0;
             color: #666;
@@ -150,32 +150,32 @@
             font-size: 14px;
             text-align: left;
         }
-        
+
         .tab-btn.active {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
         }
-        
+
         .tab-main {
             flex: 1;
             min-width: 0;
         }
-        
+
         .tab-content {
             display: none;
         }
-        
+
         .tab-content.active {
             display: block;
         }
-        
+
         .preset-list {
             display: flex;
             flex-wrap: wrap;
             gap: 8px;
             margin-bottom: 16px;
         }
-        
+
         .preset-tag {
             background: #e0e7ff;
             color: #5a67d8;
@@ -185,18 +185,18 @@
             cursor: pointer;
             transition: background 0.2s;
         }
-        
+
         .preset-tag:hover {
             background: #c3dafe;
         }
-        
+
         .unit-tags {
             display: flex;
             flex-wrap: wrap;
             gap: 6px;
             margin-top: 8px;
         }
-        
+
         .unit-tag {
             background: #f0f0f0;
             color: #666;
@@ -205,11 +205,11 @@
             font-size: 12px;
             cursor: pointer;
         }
-        
+
         .unit-tag:hover {
             background: #e0e0e0;
         }
-        
+
         footer {
             text-align: center;
             color: white;
@@ -217,7 +217,16 @@
             margin-top: 30px;
             font-size: 14px;
         }
-        
+
+        .offline-badge {
+            background: #28a745;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+
         @media (max-width: 768px) {
             .tabs-container {
                 flex-direction: column;
@@ -238,10 +247,10 @@
 <body>
     <div class="container">
         <header>
-            <h1>uniUnit</h1>
+            <h1>uniUnit <span class="offline-badge" id="offlineBadge" style="display:none;">Offline Ready</span></h1>
             <p>Unit Conversion Web Application | 单位转换工具</p>
         </header>
-        
+
         <div class="tabs-container">
             <div class="tabs-sidebar">
                 <button class="tab-btn active" onclick="showTab('simple')">Simple Convert</button>
@@ -249,298 +258,509 @@
                 <button class="tab-btn" onclick="showTab('presets')">Presets</button>
                 <button class="tab-btn" onclick="showTab('info')">Unit Info</button>
             </div>
-            
+
             <div class="tab-main">
                 <div id="simple" class="tab-content active">
-            <div class="card">
-                <h2>Simple Unit Conversion | 简单单位转换</h2>
-                <div class="form-group">
-                    <label>Value | 数值</label>
-                    <input type="number" id="simpleValue" placeholder="Enter value" value="1">
-                </div>
-                <div class="row">
-                    <div class="col">
+                    <div class="card">
+                        <h2>Simple Unit Conversion | 简单单位转换</h2>
                         <div class="form-group">
-                            <label>From Unit | 源单位</label>
-                            <input type="text" id="simpleFrom" placeholder="e.g., km, meter, 米" value="km">
+                            <label>Value | 数值</label>
+                            <input type="number" id="simpleValue" placeholder="Enter value" value="1">
                         </div>
-                    </div>
-                    <div class="col">
-                        <div class="form-group">
-                            <label>To Unit | 目标单位</label>
-                            <input type="text" id="simpleTo" placeholder="e.g., m, meter, 米" value="m">
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group">
+                                    <label>From Unit | 源单位</label>
+                                    <input type="text" id="simpleFrom" placeholder="e.g., km, meter, 米" value="km">
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-group">
+                                    <label>To Unit | 目标单位</label>
+                                    <input type="text" id="simpleTo" placeholder="e.g., m, meter, 米" value="m">
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
-                <button onclick="simpleConvert()">Convert | 转换</button>
-                <div id="simpleResult" class="result" style="display:none;"></div>
-            </div>
-        </div>
-        
-        <div id="system" class="tab-content">
-            <div class="card">
-                <h2>Custom Unit System | 自定义单位制</h2>
-                <div class="form-group">
-                    <label>Value | 数值</label>
-                    <input type="text" id="systemValue" placeholder="e.g., 100 kg, 50 m/s" value="100 kg">
-                </div>
-                <div class="form-group">
-                    <label>Unit Mapping (JSON) | 单位映射</label>
-                    <textarea id="systemUnits" rows="4" style="width:100%;padding:12px;border:2px solid #e0e0e0;border-radius:8px;font-size:16px;font-family:monospace;">{"kilogram": "gram", "meter": "centimeter", "second": "second"}</textarea>
-                </div>
-                <button onclick="systemConvert()">Convert | 转换</button>
-                <div id="systemResult" class="result" style="display:none;"></div>
-            </div>
-        </div>
-        
-        <div id="presets" class="tab-content">
-            <div class="card">
-                <h2>Quick Convert Between Presets | 预设单位制快速转换</h2>
-                <div class="form-group">
-                    <label>Value | 数值</label>
-                    <input type="text" id="presetValue" placeholder="e.g., 100 kg, 50 m" value="100 kg">
-                </div>
-                <div class="row">
-                    <div class="col">
-                        <div class="form-group">
-                            <label>From System | 源单位制</label>
-                            <select id="presetFrom">
-                                <option value="SI">SI</option>
-                                <option value="CGS">CGS</option>
-                                <option value="Imperial">Imperial</option>
-                                <option value="FPS">FPS</option>
-                                <option value="MKS">MKS</option>
-                                <option value="mmkgms">mmkgms</option>
-                                <option value="mmgms">mmgms</option>
-                                <option value="nm_ug_ps">nm_ug_ps (Nano)</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="form-group">
-                            <label>To System | 目标单位制</label>
-                            <select id="presetTo">
-                                <option value="CGS">CGS</option>
-                                <option value="SI">SI</option>
-                                <option value="Imperial">Imperial</option>
-                                <option value="FPS">FPS</option>
-                                <option value="MKS">MKS</option>
-                                <option value="mmkgms">mmkgms</option>
-                                <option value="mmgms">mmgms</option>
-                                <option value="nm_ug_ps">nm_ug_ps (Nano)</option>
-                            </select>
-                        </div>
+                        <button onclick="simpleConvert()">Convert | 转换</button>
+                        <div id="simpleResult" class="result" style="display:none;"></div>
                     </div>
                 </div>
-                <button onclick="presetConvert()">Convert | 转换</button>
-                <div id="presetResult" class="result" style="display:none;"></div>
-            </div>
-        </div>
-        
-        <div id="info" class="tab-content">
-            <div class="card">
-                <h2>Unit Information | 单位信息</h2>
-                <div class="form-group">
-                    <label>Enter Unit | 输入单位</label>
-                    <input type="text" id="infoUnit" placeholder="e.g., kg/m^3, joule, 瓦特" value="kilogram / meter ** 3">
+
+                <div id="system" class="tab-content">
+                    <div class="card">
+                        <h2>Custom Unit System | 自定义单位制</h2>
+                        <div class="form-group">
+                            <label>Value | 数值</label>
+                            <input type="text" id="systemValue" placeholder="e.g., 100 kg, 50 m/s" value="100 kg">
+                        </div>
+                        <div class="form-group">
+                            <label>Unit Mapping (JSON) | 单位映射</label>
+                            <textarea id="systemUnits" rows="4" style="width:100%;padding:12px;border:2px solid #e0e0e0;border-radius:8px;font-size:16px;font-family:monospace;">{"kilogram": "gram", "meter": "centimeter", "second": "second"}</textarea>
+                        </div>
+                        <button onclick="systemConvert()">Convert | 转换</button>
+                        <div id="systemResult" class="result" style="display:none;"></div>
+                    </div>
                 </div>
-                <button onclick="getInfo()">Get Info | 获取信息</button>
-                <div id="infoResult" class="result" style="display:none;"></div>
+
+                <div id="presets" class="tab-content">
+                    <div class="card">
+                        <h2>Quick Convert Between Presets | 预设单位制快速转换</h2>
+                        <div class="form-group">
+                            <label>Value | 数值</label>
+                            <input type="text" id="presetValue" placeholder="e.g., 100 kg, 50 m" value="100 kg">
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group">
+                                    <label>From System | 源单位制</label>
+                                    <select id="presetFrom">
+                                        <option value="SI">SI</option>
+                                        <option value="CGS" selected>CGS</option>
+                                        <option value="Imperial">Imperial</option>
+                                        <option value="FPS">FPS</option>
+                                        <option value="MKS">MKS</option>
+                                        <option value="mmkgms">mmkgms</option>
+                                        <option value="mmgms">mmgms</option>
+                                        <option value="nm_ug_ps">nm_ug_ps (Nano)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-group">
+                                    <label>To System | 目标单位制</label>
+                                    <select id="presetTo">
+                                        <option value="SI" selected>SI</option>
+                                        <option value="CGS">CGS</option>
+                                        <option value="Imperial">Imperial</option>
+                                        <option value="FPS">FPS</option>
+                                        <option value="MKS">MKS</option>
+                                        <option value="mmkgms">mmkgms</option>
+                                        <option value="mmgms">mmgms</option>
+                                        <option value="nm_ug_ps">nm_ug_ps (Nano)</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <button onclick="presetConvert()">Convert | 转换</button>
+                        <div id="presetResult" class="result" style="display:none;"></div>
+                    </div>
+                </div>
+
+                <div id="info" class="tab-content">
+                    <div class="card">
+                        <h2>Unit Information | 单位信息</h2>
+                        <div class="form-group">
+                            <label>Enter Unit | 输入单位</label>
+                            <input type="text" id="infoUnit" placeholder="e.g., kg/m^3, joule, 瓦特" value="kilogram / meter ** 3">
+                        </div>
+                        <button onclick="getInfo()">Get Info | 获取信息</button>
+                        <div id="infoResult" class="result" style="display:none;"></div>
+                    </div>
+                </div>
             </div>
         </div>
-        </div>
-        </div>
-        
+
         <footer>
             <p>uniUnit - A Python Unit Conversion Library | 基于 Pint 的单位转换库</p>
+            <p style="margin-top: 8px; font-size: 12px;">
+                JavaScript offline converter powered by js-quantities | 
+                JS 离线转换由 js-quantities 驱动
+            </p>
         </footer>
     </div>
+
+    <!-- Load js-quantities library (local version) -->
+    <script src="quantities.min.js"></script>
     
-    <script src="unit-converter.js"></script>
     <script>
-        let apiAvailable = true;
-        
-        async function checkApi() {
-            try {
-                const response = await fetch('/health', { method: 'GET' });
-                apiAvailable = response.ok;
-            } catch (e) {
-                apiAvailable = false;
-            }
-            if (!apiAvailable) {
-                const offlineMsg = document.getElementById('offlineMessage') || createOfflineMessage();
-                offlineMsg.style.display = 'block';
-            }
+    // Verify library loaded and provide fallback info
+    if (typeof Qty === 'undefined') {
+        console.error('js-quantities library not loaded! Offline conversion will not work.');
+    } else {
+        console.log('✓ js-quantities library loaded successfully');
+    }
+    </script>
+    
+    <script>
+/**
+ * uniUnit JavaScript Implementation
+ * A JavaScript port of the uniUnit Python library for offline unit conversion.
+ */
+
+// Preset unit systems
+const PRESETS = {
+    SI: { name: 'SI', units: { kilogram: 'kg', meter: 'm', second: 's', ampere: 'A', kelvin: 'K', mole: 'mol', candela: 'cd' }, description: 'International System of Units' },
+    MKS: { name: 'MKS', units: { kilogram: 'kg', meter: 'm', second: 's' }, description: 'Meter-Kilogram-Second' },
+    CGS: { name: 'CGS', units: { kilogram: 'g', meter: 'cm', second: 's' }, description: 'Centimeter-Gram-Second' },
+    mmkgms: { name: 'mmkgms', units: { kilogram: 'kg', meter: 'mm', second: 'ms' }, description: 'Millimeter-Kilogram-Millisecond' },
+    mmgms: { name: 'mmgms', units: { kilogram: 'g', meter: 'mm', second: 'ms' }, description: 'Millimeter-Gram-Millisecond' },
+    nm_ug_ps: { name: 'nm_ug_ps', units: { kilogram: 'ug', meter: 'nm', second: 'ps', ampere: 'nA', kelvin: 'K', mole: 'nmol', candela: 'cd' }, description: 'Nanometer-Microgram-Picosecond' },
+    Imperial: { name: 'Imperial', units: { kilogram: 'lb', meter: 'in', second: 's' }, description: 'Imperial units' },
+    FPS: { name: 'FPS', units: { kilogram: 'lb', meter: 'ft', second: 's' }, description: 'Foot-Pound-Second' },
+    British: { name: 'British', units: { kilogram: 'lb', meter: 'in', second: 'min' }, description: 'British units' }
+};
+
+// Chinese unit mappings
+const CHINESE_UNITS = {
+    '米': 'm', '千米': 'km', '厘米': 'cm', '毫米': 'mm', '微米': 'um', '纳米': 'nm',
+    '千克': 'kg', '克': 'g', '毫克': 'mg',
+    '秒': 's', '分钟': 'min', '时': 'h', '天': 'd',
+    '牛': 'N', '帕': 'Pa', '焦': 'J', '瓦': 'W', '伏': 'V', '安': 'A', '欧': 'ohm'
+};
+
+// Unit aliases
+const UNIT_ALIASES = {
+    'm': 'm', 'meter': 'm', 'metre': 'm', 'km': 'km', 'kilometer': 'km', 'cm': 'cm', 'centimeter': 'cm',
+    'mm': 'mm', 'millimeter': 'mm', 'um': 'um', 'micrometer': 'um', 'nm': 'nm', 'nanometer': 'nm',
+    'in': 'in', 'inch': 'in', 'ft': 'ft', 'foot': 'ft', 'feet': 'ft',
+    'kg': 'kg', 'kilogram': 'kg', 'g': 'g', 'gram': 'g', 'mg': 'mg', 'milligram': 'mg',
+    'ug': 'ug', 'microgram': 'ug', 'lb': 'lb', 'pound': 'lb',
+    's': 's', 'second': 's', 'sec': 's', 'ms': 'ms', 'millisecond': 'ms',
+    'min': 'min', 'minute': 'min', 'h': 'h', 'hour': 'h', 'hr': 'h',
+    'N': 'N', 'newton': 'N', 'kN': 'kN', 'kilonewton': 'kN', 'dyn': 'dyn', 'dyne': 'dyn',
+    'Pa': 'Pa', 'pascal': 'Pa', 'kPa': 'kPa', 'MPa': 'MPa', 'bar': 'bar', 'atm': 'atm', 'psi': 'psi',
+    'J': 'J', 'joule': 'J', 'kJ': 'kJ', 'cal': 'cal', 'calorie': 'cal', 'erg': 'erg',
+    'W': 'W', 'watt': 'W', 'kW': 'kW', 'MW': 'MW', 'hp': 'hp', 'horsepower': 'hp',
+    'V': 'V', 'volt': 'V', 'A': 'A', 'ampere': 'A', 'amp': 'A', 'mA': 'mA', 'ohm': 'ohm',
+    'Hz': 'Hz', 'hertz': 'Hz', 'rpm': 'rpm'
+};
+
+// Frequency conversion factors (with 2*pi)
+const FREQUENCY_CONVERSION = {
+    'Hz': { 'rad/s': 2 * Math.PI, 'rpm': 60, 's^-1': 1, '/s': 1, '1/s': 1 },
+    'rad/s': { 'Hz': 1 / (2 * Math.PI), 'rpm': 60 / (2 * Math.PI), 's^-1': 1 / (2 * Math.PI) },
+    'rpm': { 'Hz': 1 / 60, 'rad/s': 2 * Math.PI / 60, 's^-1': 1 / 60 },
+    's^-1': { 'Hz': 1, 'rad/s': 2 * Math.PI, 'rpm': 60 },
+    '/s': { 'Hz': 1, 'rad/s': 2 * Math.PI, 'rpm': 60 },
+    '1/s': { 'Hz': 1, 'rad/s': 2 * Math.PI, 'rpm': 60 }
+};
+
+function normalizeUnit(unit) {
+    if (!unit) return unit;
+    unit = unit.trim().toLowerCase();
+    if (CHINESE_UNITS[unit]) return CHINESE_UNITS[unit];
+    if (UNIT_ALIASES[unit]) return UNIT_ALIASES[unit];
+    return unit.replace(/平方米/g, 'm^2').replace(/平方千米/g, 'km^2')
+               .replace(/平方厘米/g, 'cm^2').replace(/立方厘米/g, 'cm^3');
+}
+
+function parseValueWithUnit(input) {
+    if (typeof input === 'number') return { value: input, unit: null };
+    input = String(input).trim();
+    const match = input.match(/^([\d.+-]+(?:[eE][+-]?\d+)?)\s*(.*)$/);
+    if (match) return { value: parseFloat(match[1]), unit: match[2] ? normalizeUnit(match[2]) : null };
+    return { value: input, unit: null };
+}
+
+function convertValue(value, fromUnit, toUnit) {
+    fromUnit = normalizeUnit(fromUnit);
+    toUnit = normalizeUnit(toUnit);
+    if (fromUnit === toUnit) return value;
+    
+    // Handle frequency conversions
+    if (FREQUENCY_CONVERSION[fromUnit] && FREQUENCY_CONVERSION[fromUnit][toUnit]) {
+        return value * FREQUENCY_CONVERSION[fromUnit][toUnit];
+    }
+    
+    // Check if Qty is available
+    if (typeof Qty === 'undefined') {
+        throw new Error('js-quantities library not loaded. Please check internet connection.');
+    }
+    
+    // Use js-quantities
+    try {
+        let fromNorm = fromUnit.replace('m/s^2', 'm/s2').replace('m/s2', 'm/s2');
+        let toNorm = toUnit.replace('m/s^2', 'm/s2').replace('m/s2', 'm/s2');
+        const qty = Qty(value, fromNorm);
+        return qty.to(toNorm).scalar;
+    } catch (e) {
+        throw new Error(`Cannot convert ${fromUnit} to ${toUnit}: ${e.message}`);
+    }
+}
+
+function getBaseUnit(unit) {
+    unit = normalizeUnit(unit);
+    const dimensions = {
+        'kg': {'[mass]': 1}, 'g': {'[mass]': 1}, 'mg': {'[mass]': 1}, 'lb': {'[mass]': 1},
+        'm': {'[length]': 1}, 'km': {'[length]': 1}, 'cm': {'[length]': 1}, 'mm': {'[length]': 1},
+        's': {'[time]': 1}, 'ms': {'[time]': 1}, 'min': {'[time]': 1}, 'h': {'[time]': 1},
+        'A': {'[current]': 1}, 'K': {'[temperature]': 1}, 'mol': {'[amount]': 1}, 'cd': {'[luminosity]': 1},
+        'N': {'[mass]': 1, '[length]': 1, '[time]': -2},
+        'Pa': {'[mass]': 1, '[length]': -1, '[time]': -2},
+        'J': {'[mass]': 1, '[length]': 2, '[time]': -2},
+        'W': {'[mass]': 1, '[length]': 2, '[time]': -3},
+        'Hz': {'[time]': -1}
+    };
+    return dimensions[unit] || {};
+}
+
+class uniUnit {
+    constructor(unitsDict) {
+        this.unitsDict = {};
+        for (const [key, value] of Object.entries(unitsDict)) {
+            this.unitsDict[normalizeUnit(key) || key] = normalizeUnit(value) || value;
+        }
+    }
+    
+    toUnit(input) {
+        let value, unit;
+        if (typeof input === 'object' && input !== null && 'value' in input) {
+            value = input.value; unit = input.unit;
+        } else if (typeof input === 'string') {
+            const parsed = parseValueWithUnit(input);
+            value = parsed.value; unit = parsed.unit;
+        } else if (typeof input === 'number') {
+            value = input; unit = 'm';
+        } else {
+            throw new Error('Invalid input format');
         }
         
-        function createOfflineMessage() {
-            const msg = document.createElement('div');
-            msg.id = 'offlineMessage';
-            msg.style.cssText = 'background:#fff3cd;color:#856404;padding:12px;border-radius:8px;margin-bottom:20px;text-align:center;';
-            msg.textContent = '⚠️ Offline mode - Using JavaScript converter';
-            document.querySelector('.container').insertBefore(msg, document.querySelector('.tabs-container'));
-            return msg;
-        }
+        if (!unit) return { value, unit: '', toString: () => `${value}` };
         
-        checkApi();
+        const baseDims = getBaseUnit(unit);
+        let targetUnit = unit;
         
-        function showTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
-            event.target.classList.add('active');
-        }
-        
-        function formatNumber(num) {
-            if (Math.abs(num) < 0.001 || Math.abs(num) > 10000) {
-                return num.toExponential(6);
-            }
-            return num.toPrecision(6);
-        }
-        
-        async function simpleConvert() {
-            const value = parseFloat(document.getElementById('simpleValue').value);
-            const from = document.getElementById('simpleFrom').value;
-            const to = document.getElementById('simpleTo').value;
-            const resultDiv = document.getElementById('simpleResult');
+        if (Object.keys(baseDims).length > 0) {
+            const numerators = [], denominators = [];
+            const dimMapping = {
+                '[mass]': this.unitsDict['kg'] || this.unitsDict['kilogram'] || this.unitsDict['g'] || 'kg',
+                '[length]': this.unitsDict['m'] || this.unitsDict['meter'] || this.unitsDict['mm'] || 'm',
+                '[time]': this.unitsDict['s'] || this.unitsDict['second'] || this.unitsDict['ms'] || 's',
+                '[current]': this.unitsDict['A'] || this.unitsDict['ampere'] || 'A',
+                '[temperature]': this.unitsDict['K'] || this.unitsDict['kelvin'] || 'K',
+                '[amount]': this.unitsDict['mol'] || this.unitsDict['mole'] || 'mol',
+                '[luminosity]': this.unitsDict['cd'] || this.unitsDict['candela'] || 'cd'
+            };
             
-            try {
-                if (apiAvailable) {
-                    const response = await fetch('/api/convert', {
-                        method: 'POST',
-                        headers: {'Content-Type': 'application/json'},
-                        body: JSON.stringify({
-                            value: value,
-                            from_unit: from,
-                            to_unit: to
-                        })
-                    });
-                    const data = await response.json();
-                    
-                    if (response.ok) {
-                        resultDiv.className = 'result';
-                        resultDiv.innerHTML = `<div class="value">${value} ${from} → ${formatNumber(data.result)} ${to}</div>`;
-                    } else {
-                        throw new Error(data.detail);
-                    }
-                } else {
-                    const result = window.jsUnitConverter.convert(value, from, to);
-                    resultDiv.className = 'result';
-                    resultDiv.innerHTML = `<div class="value">${value} ${from} → ${formatNumber(result)} ${to}</div>`;
+            for (const [dim, exp] of Object.entries(baseDims)) {
+                const targetDimUnit = dimMapping[dim];
+                if (targetDimUnit) {
+                    if (exp === 1) numerators.push(targetDimUnit);
+                    else if (exp === -1) denominators.push(targetDimUnit);
+                    else if (exp > 0) numerators.push(`${targetDimUnit}^${exp}`);
+                    else denominators.push(`${targetDimUnit}^${-exp}`);
                 }
-                resultDiv.style.display = 'block';
-            } catch (e) {
-                resultDiv.className = 'result error';
-                resultDiv.innerHTML = `Error: ${e.message}`;
-                resultDiv.style.display = 'block';
             }
+            
+            targetUnit = denominators.length > 0 
+                ? numerators.join(' * ') + ' / ' + denominators.join(' * ')
+                : numerators.join(' * ');
         }
         
-        async function systemConvert() {
-            if (!apiAvailable) {
-                alert('Unit System conversion requires the API server. Please start the backend.');
-                return;
-            }
-            const value = document.getElementById('systemValue').value;
-            const unitsStr = document.getElementById('systemUnits').value;
-            const resultDiv = document.getElementById('systemResult');
-            
-            try {
-                const units = JSON.parse(unitsStr);
-                const response = await fetch('/api/unit-system', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({
-                        value: value,  // Send full value with units like "100 kg"
-                        units: units
-                    })
-                });
-                const data = await response.json();
-                
-                if (response.ok) {
-                    resultDiv.className = 'result';
-                    resultDiv.innerHTML = `<div class="value">${value} → ${data.result}</div>`;
-                } else {
-                    resultDiv.className = 'result error';
-                    resultDiv.innerHTML = `Error: ${data.detail}`;
-                }
-                resultDiv.style.display = 'block';
-            } catch (e) {
-                resultDiv.className = 'result error';
-                resultDiv.innerHTML = `Error: ${e.message}`;
-                resultDiv.style.display = 'block';
-            }
+        try {
+            const convertedValue = convertValue(value, unit, targetUnit);
+            return { value: convertedValue, unit: targetUnit, magnitude: convertedValue, units: targetUnit, toString: () => `${convertedValue} ${targetUnit}` };
+        } catch (e) {
+            return { value, unit, magnitude: value, units: unit, toString: () => `${value} ${unit}` };
+        }
+    }
+}
+
+class UnitSystem {
+    static get_preset(name) {
+        const preset = PRESETS[name];
+        if (!preset) throw new Error(`Preset '${name}' not found. Available: ${Object.keys(PRESETS).join(', ')}`);
+        const unitsDict = {};
+        for (const [base, target] of Object.entries(preset.units)) {
+            if (base === 'kilogram') unitsDict['kg'] = target;
+            else if (base === 'meter') unitsDict['m'] = target;
+            else if (base === 'second') unitsDict['s'] = target;
+            else unitsDict[base] = target;
+        }
+        return new uniUnit(unitsDict);
+    }
+    
+    static list_presets() { return Object.keys(PRESETS); }
+}
+
+function quickConvert(input, fromSystem, toSystem) {
+    const fromUnit = UnitSystem.get_preset(fromSystem);
+    const toUnit = UnitSystem.get_preset(toSystem);
+    const siValue = fromUnit.toUnit(input);
+    return toUnit.toUnit(siValue.value + ' ' + siValue.unit);
+}
+
+function getUnitInfo(input) {
+    const parsed = parseValueWithUnit(input);
+    const unit = normalizeUnit(parsed.unit);
+    return {
+        magnitude: parsed.value,
+        units: unit,
+        base_units: getBaseUnit(unit),
+        dimensionality: JSON.stringify(getBaseUnit(unit)),
+        is_dimensionless: Object.keys(getBaseUnit(unit)).length === 0
+    };
+}
+
+// ============ UI Integration ============
+
+let apiAvailable = true;
+
+async function checkApi() {
+    // First check if js-quantities is loaded
+    if (typeof Qty === 'undefined') {
+        console.warn('js-quantities library not available, will rely on API');
+    }
+    
+    try {
+        const response = await fetch('/health', { method: 'GET' });
+        apiAvailable = response.ok;
+    } catch (e) {
+        apiAvailable = false;
+    }
+    
+    if (!apiAvailable) {
+        document.getElementById('offlineBadge').style.display = 'inline';
+    }
+}
+
+// Wait for DOM and library to load
+document.addEventListener('DOMContentLoaded', function() {
+    checkApi();
+});
+
+function showTab(tabId) {
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(tabId).classList.add('active');
+    event.target.classList.add('active');
+}
+
+function formatNumber(num) {
+    if (Math.abs(num) < 0.001 || Math.abs(num) > 10000) {
+        return num.toExponential(6);
+    }
+    return num.toPrecision(6);
+}
+
+async function simpleConvert() {
+    const value = parseFloat(document.getElementById('simpleValue').value);
+    const from = document.getElementById('simpleFrom').value;
+    const to = document.getElementById('simpleTo').value;
+    const resultDiv = document.getElementById('simpleResult');
+
+    try {
+        let result;
+        if (apiAvailable) {
+            const response = await fetch('/api/convert', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ value, from_unit: from, to_unit: to })
+            });
+            const data = await response.json();
+            if (!response.ok) throw new Error(data.detail);
+            result = data.result;
+        } else {
+            result = convertValue(value, from, to);
+        }
+        resultDiv.className = 'result';
+        resultDiv.innerHTML = `<div class="value">${value} ${from} → ${formatNumber(result)} ${to}</div>`;
+        resultDiv.style.display = 'block';
+    } catch (e) {
+        resultDiv.className = 'result error';
+        resultDiv.innerHTML = `Error: ${e.message}`;
+        resultDiv.style.display = 'block';
+    }
+}
+
+async function systemConvert() {
+    const value = document.getElementById('systemValue').value;
+    const unitsStr = document.getElementById('systemUnits').value;
+    const resultDiv = document.getElementById('systemResult');
+
+    try {
+        const units = JSON.parse(unitsStr);
+        let result;
+        
+        if (apiAvailable) {
+            const response = await fetch('/api/unit-system', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ value, units })
+            });
+            const data = await response.json();
+            if (!response.ok) throw new Error(data.detail);
+            result = data.result;
+        } else {
+            const u = new uniUnit(units);
+            const converted = u.toUnit(value);
+            result = converted.toString();
         }
         
-        async function presetConvert() {
-            if (!apiAvailable) {
-                alert('Preset conversion requires the API server. Please start the backend.');
-                return;
-            }
-            const value = document.getElementById('presetValue').value;
-            const from = document.getElementById('presetFrom').value;
-            const to = document.getElementById('presetTo').value;
-            const resultDiv = document.getElementById('presetResult');
-            
-            try {
-                const response = await fetch('/api/quick-convert', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({
-                        value: value,
-                        from_system: from,
-                        to_system: to
-                    })
-                });
-                const data = await response.json();
-                
-                if (response.ok) {
-                    resultDiv.className = 'result';
-                    resultDiv.innerHTML = `<div class="value">${data.value} → ${data.result}</div>`;
-                } else {
-                    resultDiv.className = 'result error';
-                    resultDiv.innerHTML = `Error: ${data.detail}`;
-                }
-                resultDiv.style.display = 'block';
-            } catch (e) {
-                resultDiv.className = 'result error';
-                resultDiv.innerHTML = `Error: ${e.message}`;
-                resultDiv.style.display = 'block';
-            }
+        resultDiv.className = 'result';
+        resultDiv.innerHTML = `<div class="value">${value} → ${result}</div>`;
+        resultDiv.style.display = 'block';
+    } catch (e) {
+        resultDiv.className = 'result error';
+        resultDiv.innerHTML = `Error: ${e.message}`;
+        resultDiv.style.display = 'block';
+    }
+}
+
+async function presetConvert() {
+    const value = document.getElementById('presetValue').value;
+    const from = document.getElementById('presetFrom').value;
+    const to = document.getElementById('presetTo').value;
+    const resultDiv = document.getElementById('presetResult');
+
+    try {
+        let result;
+        
+        if (apiAvailable) {
+            const response = await fetch('/api/quick-convert', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ value, from_system: from, to_system: to })
+            });
+            const data = await response.json();
+            if (!response.ok) throw new Error(data.detail);
+            result = data.result;
+        } else {
+            const converted = quickConvert(value, from, to);
+            result = converted.toString();
         }
         
-        async function getInfo() {
-            if (!apiAvailable) {
-                alert('Unit Info requires the API server. Please start the backend.');
-                return;
-            }
-            const unit = document.getElementById('infoUnit').value;
-            const resultDiv = document.getElementById('infoResult');
-            
-            try {
-                const response = await fetch('/api/unit-info?value=' + encodeURIComponent(unit));
-                const data = await response.json();
-                
-                if (response.ok) {
-                    resultDiv.className = 'result';
-                    resultDiv.innerHTML = `
-                        <div><strong>Units:</strong> ${data.units}</div>
-                        <div><strong>Magnitude:</strong> ${data.magnitude}</div>
-                        <div><strong>Base Units:</strong> ${JSON.stringify(data.base_units)}</div>
-                        <div><strong>Dimensionality:</strong> ${data.dimensionality}</div>
-                        <div><strong>Dimensionless:</strong> ${data.is_dimensionless}</div>
-                    `;
-                } else {
-                    resultDiv.className = 'result error';
-                    resultDiv.innerHTML = `Error: ${data.detail}`;
-                }
-                resultDiv.style.display = 'block';
-            } catch (e) {
-                resultDiv.className = 'result error';
-                resultDiv.innerHTML = `Error: ${e.message}`;
-                resultDiv.style.display = 'block';
-            }
+        resultDiv.className = 'result';
+        resultDiv.innerHTML = `<div class="value">${value} (${from}) → ${result} (${to})</div>`;
+        resultDiv.style.display = 'block';
+    } catch (e) {
+        resultDiv.className = 'result error';
+        resultDiv.innerHTML = `Error: ${e.message}`;
+        resultDiv.style.display = 'block';
+    }
+}
+
+async function getInfo() {
+    const unit = document.getElementById('infoUnit').value;
+    const resultDiv = document.getElementById('infoResult');
+
+    try {
+        let info;
+        
+        if (apiAvailable) {
+            const response = await fetch('/api/unit-info?value=' + encodeURIComponent(unit));
+            const data = await response.json();
+            if (!response.ok) throw new Error(data.detail);
+            info = data;
+        } else {
+            info = getUnitInfo('1 ' + unit);
         }
+        
+        resultDiv.className = 'result';
+        resultDiv.innerHTML = `
+            <div><strong>Units:</strong> ${info.units}</div>
+            <div><strong>Magnitude:</strong> ${info.magnitude}</div>
+            <div><strong>Base Units:</strong> ${JSON.stringify(info.base_units)}</div>
+            <div><strong>Dimensionality:</strong> ${info.dimensionality}</div>
+            <div><strong>Dimensionless:</strong> ${info.is_dimensionless}</div>
+        `;
+        resultDiv.style.display = 'block';
+    } catch (e) {
+        resultDiv.className = 'result error';
+        resultDiv.innerHTML = `Error: ${e.message}`;
+        resultDiv.style.display = 'block';
+    }
+}
     </script>
 </body>
 </html>
