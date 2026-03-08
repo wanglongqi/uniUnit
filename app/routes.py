@@ -134,12 +134,18 @@ async def get_chinese_units():
 async def list_common_units():
     """List common units from Pint registry"""
     common_units = [
-        "meter", "kilometer", "centimeter", "millimeter", "nanometer",
-        "kilogram", "gram", "milligram", "microgram",
-        "second", "minute", "hour", "day",
-        "newton", "pascal", "joule", "watt",
-        "volt", "ampere", "ohm",
+        "meter", "kilometer", "centimeter", "millimeter", "micrometer", "nanometer", "inch", "foot", "yard", "mile", "nautical_mile", "angstrom",
+        "kilogram", "gram", "milligram", "microgram", "tonne", "pound", "ounce", "stone", "slug",
+        "second", "millisecond", "microsecond", "nanosecond", "minute", "hour", "day", "week", "month", "year",
+        "newton", "kilonewton", "pound_force", "dyne", "kilogram_force",
+        "pascal", "kilopascal", "megapascal", "gigapascal", "bar", "millibar", "atmosphere", "psi", "torr", "mmHg",
+        "joule", "kilojoule", "megajoule", "calorie", "kilocalorie", "watt_hour", "kilowatt_hour", "electron_volt", "BTU",
+        "watt", "kilowatt", "megawatt", "milliwatt", "horsepower",
         "kelvin", "degree_Celsius", "degree_Fahrenheit",
-        "meter/second", "kilogram/meter**3", "newton/meter**2"
+        "hertz", "kilohertz", "megahertz", "gigahertz",
+        "meter/second", "kilometer/hour", "mile/hour", "knot",
+        "meter**2", "hectare", "acre", "square_mile", "square_inch", "square_foot",
+        "meter**3", "liter", "milliliter", "gallon", "quart", "pint", "cup", "fluid_ounce",
+        "radian", "degree", "arcminute", "arcsecond"
     ]
     return {"units": common_units}

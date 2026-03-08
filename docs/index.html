@@ -1,492 +1,393 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>uniUnit - Complete Unit System Converter</title>
-<style>
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body {
-	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-	min-height: 100vh;
-	padding: 20px;
-}
-.container { max-width: 1024px; margin: 0 auto; }
-header { text-align: center; color: white; margin-bottom: 30px; }
-header h1 { font-size: 2.5em; margin-bottom: 10px; }
-.offline-badge { background: #28a745; padding: 4px 12px; border-radius: 20px; font-size: 12px; margin-left: 10px; }
-.card {
-	background: white;
-	border-radius: 16px;
-	padding: 24px;
-	margin-bottom: 20px;
-	box-shadow: 0 10px 40px rgba(0,0,0,0.1);
-}
-.card h2 { color: #333; margin-bottom: 20px; font-size: 1.3em; border-bottom: 2px solid #667eea; padding-bottom: 10px; }
-.form-group { margin-bottom: 16px; position: relative; }
-label { display: block; margin-bottom: 6px; color: #555; font-weight: 500; }
-input, select, textarea {
-	width: 100%;
-	padding: 12px;
-	border: 2px solid #e0e0e0;
-	border-radius: 8px;
-	font-size: 16px;
-}
-input:focus, select:focus { outline: none; border-color: #667eea; }
-.autocomplete-list {
-	position: absolute;
-	top: 100%;
-	left: 0;
-	right: 0;
-	background: white;
-	border: 2px solid #667eea;
-	border-top: none;
-	border-radius: 0 0 8px 8px;
-	max-height: 200px;
-	overflow-y: auto;
-	z-index: 1000;
-	display: none;
-}
-.autocomplete-item {
-	padding: 10px 12px;
-	cursor: pointer;
-	border-bottom: 1px solid #eee;
-}
-.autocomplete-item:hover { background: #f0f4ff; }
-.autocomplete-item:last-child { border-bottom: none; }
-.row { display: flex; gap: 16px; margin-bottom: 16px; }
-.col { flex: 1; }
-button {
-	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-	color: white;
-	border: none;
-	padding: 14px 28px;
-	border-radius: 8px;
-	font-size: 16px;
-	font-weight: 600;
-	cursor: pointer;
-	width: 100%;
-}
-button:hover { opacity: 0.9; }
-.result {
-	margin-top: 16px;
-	padding: 16px;
-	background: #f8f9ff;
-	border-radius: 8px;
-	border-left: 4px solid #667eea;
-}
-.result.error { background: #fff5f5; border-left-color: #e53e3e; color: #c53030; }
-.success { color: #28a745; }
-.tabs-container { display: flex; gap: 30px; }
-.tabs-sidebar { display: flex; flex-direction: column; gap: 10px; min-width: 180px; }
-.tab-btn {
-	background: #f0f0f0;
-	color: #666;
-	padding: 12px 20px;
-	border-radius: 8px;
-	cursor: pointer;
-	border: none;
-	font-size: 14px;
-	text-align: left;
-}
-.tab-btn.active { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
-.tab-content { display: none; }
-.tab-content.active { display: block; }
-@media (max-width: 768px) {
-	.tabs-container { flex-direction: column; }
-	.tabs-sidebar { flex-direction: row; min-width: auto; }
-	.tab-btn { text-align: center; }
-	.row { flex-direction: column; }
-}
-</style>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>uniUnit | Browser Engine Dashboard</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link
+		href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap"
+		rel="stylesheet">
+	<script src="https://unpkg.com/lucide@latest"></script>
+	<link rel="stylesheet" href="modern.css">
 </head>
+
 <body>
-<div class="container">
-<header>
-	<h1>uniUnit <span class="offline-badge">Powered by math.js</span></h1>
-	<p>Complete Unit System Converter | 完整单位系统转换器</p>
-</header>
+	<div class="layout">
+		<aside class="sidebar">
+			<div class="logo">
+				<img src="logo.png" alt="Logo">
+				<span>uniUnit</span>
+			</div>
 
-<div class="tabs-container">
-	<div class="tabs-sidebar">
-		<button class="tab-btn active" onclick="showTab('simple')">Simple Convert</button>
-		<button class="tab-btn" onclick="showTab('system')">Unit System</button>
-		<button class="tab-btn" onclick="showTab('presets')">Presets</button>
-		<button class="tab-btn" onclick="showTab('tests')">Run Tests</button>
+			<nav class="navigation">
+				<button class="nav-link active" onclick="showTab('simple', this)">
+					<i data-lucide="zap"></i> Quick Tool
+				</button>
+				<button class="nav-link" onclick="showTab('system', this)">
+					<i data-lucide="layout-grid"></i> Mapping
+				</button>
+				<button class="nav-link" onclick="showTab('presets', this)">
+					<i data-lucide="layers"></i> Presets
+				</button>
+				<div class="theme-toggle" onclick="toggleTheme()">
+					<i id="themeIcon" data-lucide="moon"></i>
+					<span id="themeLabel">Dark Appearance</span>
+				</div>
+			</nav>
+
+			<div class="badge-footer">
+				<p style="font-weight: 800; color: #3b82f6; margin-bottom: 4px;">Static v2.5.0</p>
+				<p style="color: #64748b; font-size: 0.75rem;">Math.js Native</p>
+			</div>
+		</aside>
+
+		<main class="main">
+			<!-- QUICK TOOL -->
+			<div id="simple" class="tab-content active">
+				<div class="header">
+					<h2>Browser Engine</h2>
+					<p class="subtitle">Client-side unit transformation engine running zero-latency logic in your
+						browser via Math.js.</p>
+				</div>
+
+				<div class="glass-panel">
+					<div class="form-section">
+						<div class="form-row">
+							<div class="field full-width">
+								<label>Numerical Value</label>
+								<input type="number" id="simpleValue" value="1" step="any">
+							</div>
+						</div>
+						<div class="form-row">
+							<div class="field">
+								<label>Origin</label>
+								<input type="text" id="simpleFrom" value="km" autocomplete="off">
+								<div class="suggestions" id="autoSimpleFrom" style="display:none;"></div>
+							</div>
+							<div class="field">
+								<label>Destination</label>
+								<input type="text" id="simpleTo" value="m" autocomplete="off">
+								<div class="suggestions" id="autoSimpleTo" style="display:none;"></div>
+							</div>
+						</div>
+						<div>
+							<button class="btn" onclick="simpleConvert()">
+								<i data-lucide="play"></i> Compute Locally
+							</button>
+						</div>
+					</div>
+				</div>
+
+				<div id="simpleResult" class="result-box"></div>
+			</div>
+
+			<!-- MAPPING -->
+			<div id="system" class="tab-content">
+				<div class="header">
+					<h2>Foundation Map</h2>
+					<p class="subtitle">Manual canonical projection onto target physical foundations using base unit
+						normalization.</p>
+				</div>
+				<div class="glass-panel">
+					<div class="form-section">
+						<div class="field">
+							<label>Input Expression</label>
+							<input type="text" id="systemValue" value="100 N" placeholder="e.g., 50 m/s">
+						</div>
+						<div class="field">
+							<label>Base JSON Rules</label>
+							<textarea id="systemUnits" rows="6"
+								style="font-family: 'JetBrains Mono', monospace;">{"kg": "kg", "m": "mm", "s": "ms"}</textarea>
+						</div>
+						<div>
+							<button class="btn" onclick="systemConvert()">
+								<i data-lucide="move-right"></i> Execute Projection
+							</button>
+						</div>
+					</div>
+				</div>
+				<div id="systemResult" class="result-box"></div>
+			</div>
+
+			<!-- PRESETS -->
+			<div id="presets" class="tab-content">
+				<div class="header">
+					<h2>Preset Transform</h2>
+					<p class="subtitle">Quick-swap between standard measurement frameworks with zero configuration.</p>
+				</div>
+				<div class="glass-panel">
+					<div class="form-section">
+						<div class="field">
+							<label>Input Expression</label>
+							<input type="text" id="presetValue" value="100 kg">
+						</div>
+						<div class="form-row">
+							<div class="field">
+								<label>Source Set</label>
+								<select id="presetFrom">
+									<option value="SI">SI</option>
+									<option value="CGS" selected>CGS</option>
+									<option value="mmkgms">mmkgms</option>
+									<option value="Imperial">Imperial</option>
+								</select>
+							</div>
+							<div class="field">
+								<label>Target Set</label>
+								<select id="presetTo">
+									<option value="SI" selected>SI</option>
+									<option value="CGS">CGS</option>
+									<option value="mmkgms">mmkgms</option>
+									<option value="Imperial">Imperial</option>
+								</select>
+							</div>
+						</div>
+						<div>
+							<button class="btn" onclick="presetConvert()">
+								<i data-lucide="zap"></i> Rapid Swap
+							</button>
+						</div>
+					</div>
+				</div>
+				<div id="presetResult" class="result-box"></div>
+			</div>
+		</main>
 	</div>
 
-	<div class="tab-main">
-		<!-- Simple Conversion -->
-		<div id="simple" class="tab-content active">
-			<div class="card">
-				<h2>Simple Unit Conversion</h2>
-				<div class="form-group">
-					<label>Value</label>
-					<input type="number" id="simpleValue" value="1">
-				</div>
-				<div class="row">
-					<div class="col">
-						<div class="form-group">
-							<label>From Unit</label>
-							<input type="text" id="simpleFrom" value="km" autocomplete="off">
-							<div class="autocomplete-list" id="autocompleteFrom"></div>
-						</div>
-					</div>
-					<div class="col">
-						<div class="form-group">
-							<label>To Unit</label>
-							<input type="text" id="simpleTo" value="m" autocomplete="off">
-							<div class="autocomplete-list" id="autocompleteTo"></div>
-						</div>
-					</div>
-				</div>
-				<button onclick="simpleConvert()">Convert</button>
-				<div id="simpleResult" class="result" style="display:none;"></div>
-			</div>
-		</div>
+	<script src="https://unpkg.com/mathjs@14.0.1/lib/browser/math.js"></script>
+	<script>
+		lucide.createIcons();
 
-		<!-- Unit System Conversion -->
-		<div id="system" class="tab-content">
-			<div class="card">
-				<h2>Unit System Conversion</h2>
-				<div class="form-group">
-					<label>Value with Units (e.g., "100 N")</label>
-					<input type="text" id="systemValue" value="100 N">
-				</div>
-				<div class="form-group">
-					<label>Target System (JSON format)</label>
-					<textarea id="systemUnits" rows="3">{"kg": "kg", "m": "mm", "s": "ms"}</textarea>
-				</div>
-				<button onclick="systemConvert()">Convert</button>
-				<div id="systemResult" class="result" style="display:none;"></div>
-			</div>
-		</div>
-
-		<!-- Presets Conversion -->
-		<div id="presets" class="tab-content">
-			<div class="card">
-				<h2>Preset Systems Quick Convert</h2>
-				<div class="form-group">
-					<label>Value (e.g., "100 kg")</label>
-					<input type="text" id="presetValue" value="100 kg">
-				</div>
-				<div class="row">
-					<div class="col">
-						<div class="form-group">
-							<label>From System</label>
-							<select id="presetFrom">
-								<option value="SI">SI</option>
-								<option value="CGS">CGS</option>
-								<option value="mmkgms">mmkgms</option>
-								<option value="mmgms">mmgms</option>
-								<option value="Imperial">Imperial</option>
-								<option value="FPS">FPS</option>
-							</select>
-						</div>
-					</div>
-					<div class="col">
-						<div class="form-group">
-							<label>To System</label>
-							<select id="presetTo">
-								<option value="mmkgms">mmkgms</option>
-								<option value="CGS">CGS</option>
-								<option value="SI">SI</option>
-								<option value="mmgms">mmgms</option>
-								<option value="Imperial">Imperial</option>
-								<option value="FPS">FPS</option>
-							</select>
-						</div>
-					</div>
-				</div>
-				<button onclick="presetConvert()">Convert</button>
-				<div id="presetResult" class="result" style="display:none;"></div>
-			</div>
-		</div>
-
-		<!-- Test Suite -->
-		<div id="tests" class="tab-content">
-			<div class="card">
-				<h2>Test Suite (Verify Python Alignment)</h2>
-				<button onclick="runTests()">Run All Tests</button>
-				<div id="testResult" class="result" style="display:none;"></div>
-			</div>
-		</div>
-	</div>
-</div>
-</div>
-
-<!-- Load math.js locally for offline use -->
-<script src="node_modules/mathjs/lib/browser/math.js"></script>
-<script>
-const ALL_UNITS = [
-	'm', 'meter', 'km', 'kilometer', 'cm', 'centimeter', 'mm', 'millimeter', 'um', 'micrometer', 'nm', 'nanometer', 'in', 'inch', 'ft', 'foot', 'yd', 'yard', 'mi', 'mile',
-	'kg', 'kilogram', 'g', 'gram', 'mg', 'milligram', 'ug', 'microgram', 'lb', 'pound', 'oz', 'ounce', 'ton',
-	's', 'second', 'ms', 'millisecond', 'us', 'microsecond', 'ns', 'nanosecond', 'min', 'minute', 'h', 'hour', 'd', 'day', 'yr', 'year',
-	'N', 'newton', 'kN', 'kilonewton', 'dyn', 'dyne', 'lbf',
-	'Pa', 'pascal', 'kPa', 'MPa', 'GPa', 'bar', 'atm', 'psi', 'mmHg',
-	'J', 'joule', 'kJ', 'MJ', 'cal', 'kcal', 'eV', 'erg', 'BTU',
-	'W', 'watt', 'kW', 'MW', 'hp', 'horsepower',
-	'V', 'volt', 'kV', 'mV', 'A', 'ampere', 'mA', 'kA', 'ohm', 'kohm', 'F', 'farad', 'H', 'henry',
-	'Hz', 'hertz', 'kHz', 'MHz', 'GHz', 'rad/s', 'rpm',
-	'm/s', 'km/h', 'mph', 'kn', 'knot', 'c',
-	'm/s^2', 'g', 'grav',
-	'kg/m^3', 'g/cm^3', 'lb/ft^3',
-	'N*m', 'N*m', 'ft*lbf',
-	'K', 'C', 'celsius', 'F', 'fahrenheit', 'R', 'rankine',
-	'mol', 'mole', 'mmol', 'kmol',
-	'cd', 'candela', 'lm', 'lumen', 'lx', 'lux',
-	'rad', 'radian', 'deg', 'degree', 'grad', 'gradian', 'sr', 'steradian'
-];
-
-function setupAutocomplete(inputId, listId) {
-	const input = document.getElementById(inputId);
-	const list = document.getElementById(listId);
-	
-	input.addEventListener('input', function() {
-		const val = this.value.toLowerCase();
-		if (!val) { list.style.display = 'none'; return; }
-		
-		const matches = ALL_UNITS.filter(u => u.toLowerCase().startsWith(val)).slice(0, 10);
-		if (matches.length === 0) { list.style.display = 'none'; return; }
-		
-		list.innerHTML = matches.map(u => `<div class="autocomplete-item">${u}</div>`).join('');
-		list.style.display = 'block';
-		
-		list.querySelectorAll('.autocomplete-item').forEach(item => {
-			item.addEventListener('click', function() {
-				input.value = this.textContent;
-				list.style.display = 'none';
-			});
-		});
-	});
-	
-	input.addEventListener('blur', () => setTimeout(() => list.style.display = 'none', 200));
-}
-
-setupAutocomplete('simpleFrom', 'autocompleteFrom');
-setupAutocomplete('simpleTo', 'autocompleteTo');
-
-class UniUnitSystem {
-	constructor(unitsDict) {
-		this.unitsDict = this.normalizeDict(unitsDict);
-	}
-
-	normalizeDict(dict) {
-		const aliases = {
-			'kilogram': 'kg', 'gram': 'g', 'meter': 'm', 'millimeter': 'mm',
-			'centimeter': 'cm', 'kilometer': 'km', 'second': 's', 'millisecond': 'ms',
-			'minute': 'min', 'hour': 'h'
-		};
-
-		const result = {};
-		for (const [k, v] of Object.entries(dict)) {
-			const nk = (aliases[k.toLowerCase()] || k).toLowerCase();
-			const nv = (aliases[v.toLowerCase()] || v).toLowerCase();
-			result[nk] = nv;
-		}
-		return result;
-	}
-
-	convert(input) {
-		const match = input.trim().match(/^([\d.+-]+(?:[eE][+-]?\d+)?)\s+(.+)$/);
-		if (!match) throw new Error('Invalid format. Use: "100 N"');
-
-		const value = parseFloat(match[1]);
-		const unitStr = match[2].trim();
-
-		const unit = math.unit(value, unitStr);
-		const dims = unit.dimensions;
-		const dimNames = ['mass', 'length', 'time', 'current', 'temperature', 'amount', 'luminous', 'angle', 'solid_angle'];
-
-		const dimMap = {};
-		for (let i = 0; i < dims.length; i++) {
-			if (dims[i] !== 0) dimMap[dimNames[i]] = dims[i];
+		// THEME ENGINE
+		function initTheme() {
+			const saved = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+			setTheme(saved);
 		}
 
-		const targetUnits = {
-			mass: this.unitsDict['kg'] || 'kg',
-			length: this.unitsDict['m'] || 'm',
-			time: this.unitsDict['s'] || 's',
-			current: this.unitsDict['a'] || 'A',
-			temperature: this.unitsDict['k'] || 'K',
-			amount: this.unitsDict['mol'] || 'mol',
-			luminous: this.unitsDict['cd'] || 'cd'
-		};
-
-		const numerators = [], denominators = [];
-		for (const [dim, exp] of Object.entries(dimMap)) {
-			const tu = targetUnits[dim];
-			if (!tu) continue;
-			if (exp === 1) numerators.push(tu);
-			else if (exp === -1) denominators.push(tu);
-			else if (exp > 0) numerators.push(`${tu}^${exp}`);
-			else denominators.push(`${tu}^${-exp}`);
-		}
-
-		let targetUnitStr = numerators.join('*');
-		if (denominators.length > 0) targetUnitStr += '/' + denominators.join('*');
-
-		let factor = 1;
-		const siUnits = {mass: 'kg', length: 'm', time: 's', current: 'A', temperature: 'K', amount: 'mol', luminous: 'cd'};
-
-		for (const [dim, exp] of Object.entries(dimMap)) {
-			const siUnit = siUnits[dim];
-			const targetUnit = targetUnits[dim];
-			if (!siUnit || !targetUnit) continue;
-
-			const siToBase = this.getUnitFactor(siUnit);
-			const targetToBase = this.getUnitFactor(targetUnit);
-			const dimFactor = siToBase / targetToBase;
-			factor *= Math.pow(dimFactor, exp);
-		}
-
-		const resultValue = value * factor;
-		return { value: resultValue, unit: targetUnitStr, magnitude: resultValue, units: targetUnitStr, toString: () => `${resultValue} ${targetUnitStr}` };
-	}
-
-	getUnitFactor(unit) {
-		const factors = {
-			'kg': 1, 'g': 0.001, 'mg': 0.000001, 'lb': 0.453592,
-			'm': 1, 'mm': 0.001, 'cm': 0.01, 'km': 1000, 'in': 0.0254, 'ft': 0.3048,
-			's': 1, 'ms': 0.001, 'min': 60, 'h': 3600,
-			'a': 1, 'ma': 0.001, 'ka': 1000,
-			'k': 1, 'mol': 1, 'mmol': 0.001, 'cd': 1
-		};
-		return factors[unit.toLowerCase()] || 1;
-	}
-}
-
-const PRESETS = {
-	SI: {kg: 'kg', m: 'm', s: 's'},
-	MKS: {kg: 'kg', m: 'm', s: 's'},
-	CGS: {kg: 'g', m: 'cm', s: 's'},
-	mmkgms: {kg: 'kg', m: 'mm', s: 'ms'},
-	mmgms: {kg: 'g', m: 'mm', s: 'ms'},
-	nm_ug_ps: {kg: 'ug', m: 'nm', s: 'ps'},
-	Imperial: {kg: 'lb', m: 'in', s: 's'},
-	FPS: {kg: 'lb', m: 'ft', s: 's'}
-};
-
-function quickConvert(input, fromSystem, toSystem) {
-	if (fromSystem === toSystem) return { value: input, unit: '', toString: () => input };
-	const toPreset = PRESETS[toSystem];
-	if (!toPreset) throw new Error(`Unknown system: ${toSystem}`);
-	const converter = new UniUnitSystem(toPreset);
-	return converter.convert(input);
-}
-
-function showTab(tabId) {
-	document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-	document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-	document.getElementById(tabId).classList.add('active');
-	event.target.classList.add('active');
-}
-
-function formatNum(n) {
-	if (Math.abs(n) < 0.001 || Math.abs(n) > 10000) return n.toExponential(6);
-	return n.toPrecision(6);
-}
-
-function simpleConvert() {
-	const value = parseFloat(document.getElementById('simpleValue').value);
-	const from = document.getElementById('simpleFrom').value;
-	const to = document.getElementById('simpleTo').value;
-	const resultDiv = document.getElementById('simpleResult');
-
-	try {
-		const unit = math.unit(value, from);
-		const converted = unit.to(to);
-		resultDiv.className = 'result';
-		resultDiv.innerHTML = `<span class="success">✓</span> ${value} ${from} = ${formatNum(converted.value)} ${to}`;
-		resultDiv.style.display = 'block';
-	} catch (e) {
-		resultDiv.className = 'result error';
-		resultDiv.innerHTML = `Error: ${e.message}`;
-		resultDiv.style.display = 'block';
-	}
-}
-
-function systemConvert() {
-	const value = document.getElementById('systemValue').value;
-	const unitsStr = document.getElementById('systemUnits').value;
-	const resultDiv = document.getElementById('systemResult');
-
-	try {
-		const units = JSON.parse(unitsStr);
-		const converter = new UniUnitSystem(units);
-		const result = converter.convert(value);
-		resultDiv.className = 'result';
-		resultDiv.innerHTML = `<span class="success">✓</span> ${value} → ${result.toString()}`;
-		resultDiv.style.display = 'block';
-	} catch (e) {
-		resultDiv.className = 'result error';
-		resultDiv.innerHTML = `Error: ${e.message}`;
-		resultDiv.style.display = 'block';
-	}
-}
-
-function presetConvert() {
-	const value = document.getElementById('presetValue').value;
-	const from = document.getElementById('presetFrom').value;
-	const to = document.getElementById('presetTo').value;
-	const resultDiv = document.getElementById('presetResult');
-
-	try {
-		const result = quickConvert(value, from, to);
-		resultDiv.className = 'result';
-		resultDiv.innerHTML = `<span class="success">✓</span> ${value} (${from}) → ${result.toString()} (${to})`;
-		resultDiv.style.display = 'block';
-	} catch (e) {
-		resultDiv.className = 'result error';
-		resultDiv.innerHTML = `Error: ${e.message}`;
-		resultDiv.style.display = 'block';
-	}
-}
-
-function runTests() {
-	const tests = [
-		{input: '100 N', system: 'mmkgms', expected: 0.1, tolerance: 0.001},
-		{input: '100 N', system: 'CGS', expected: 10000000, tolerance: 1},
-		{input: '1 kg', system: 'CGS', expected: 1000, tolerance: 0.01},
-		{input: '1 m', system: 'CGS', expected: 100, tolerance: 0.01},
-		{input: '50 m/s', system: 'mmkgms', expected: 50, tolerance: 0.01},
-		{input: '1 J', system: 'CGS', expected: 10000000, tolerance: 1},
-		{input: '1000 kg', system: 'Imperial', expected: 2204.62, tolerance: 1},
-		{input: '1 m', system: 'FPS', expected: 3.28084, tolerance: 0.01},
-		{input: '1 Pa', system: 'CGS', expected: 10, tolerance: 0.1},
-		{input: '1 Hz', system: 'SI', expected: 1, tolerance: 0.001},
-	];
-
-	let passed = 0;
-	let failed = 0;
-	let results = [];
-
-	for (const test of tests) {
-		try {
-			const preset = PRESETS[test.system];
-			const converter = new UniUnitSystem(preset);
-			const result = converter.convert(test.input);
-			const diff = Math.abs(result.value - test.expected);
-			
-			if (diff <= test.tolerance) {
-				passed++;
-				results.push(`<span class="success">✓</span> ${test.input} → ${test.system}: ${result.value} (expected ${test.expected})`);
+		function setTheme(theme) {
+			document.documentElement.setAttribute('data-theme', theme);
+			localStorage.setItem('theme', theme);
+			const icon = document.getElementById('themeIcon');
+			const label = document.getElementById('themeLabel');
+			if (theme === 'dark') {
+				icon.setAttribute('data-lucide', 'sun');
+				label.textContent = 'Light Appearance';
 			} else {
-				failed++;
-				results.push(`<span style="color:#c53030">✗</span> ${test.input} → ${test.system}: ${result.value} (expected ${test.expected}, diff ${diff.toFixed(6)})`);
+				icon.setAttribute('data-lucide', 'moon');
+				label.textContent = 'Dark Appearance';
 			}
-		} catch (e) {
-			failed++;
-			results.push(`<span style="color:#c53030">✗</span> ${test.input} → ${test.system}: Error: ${e.message}`);
+			lucide.createIcons();
 		}
-	}
 
-	const resultDiv = document.getElementById('testResult');
-	resultDiv.className = 'result';
-	resultDiv.innerHTML = `<strong>Test Results: ${passed}/${tests.length} passed</strong><br><br>` + results.join('<br>');
-	resultDiv.style.display = 'block';
-}
-</script>
+		window.toggleTheme = () => {
+			const current = document.documentElement.getAttribute('data-theme');
+			setTheme(current === 'dark' ? 'light' : 'dark');
+		}
+
+		initTheme();
+
+		const UNIT_KB = [
+			// Length
+			{ s: 'm', f: 'meter', n: 'Meter (米)', c: 'Length', d: 'Base SI unit. ~3.28 ft.' },
+			{ s: 'km', f: 'kilometer', n: 'Kilometer (千米)', c: 'Length', d: '1,000 meters.' },
+			{ s: 'cm', f: 'centimeter', n: 'Centimeter (厘米)', c: 'Length', d: 'Metric unit (0.01m).' },
+			{ s: 'mm', f: 'millimeter', n: 'Millimeter (毫米)', c: 'Length', d: 'Metric unit (0.001m).' },
+			{ s: 'um', f: 'micrometer', n: 'Micrometer (微米)', c: 'Length', d: 'Micro-scale unit.' },
+			{ s: 'nm', f: 'nanometer', n: 'Nanometer (纳米)', c: 'Length', d: 'Atomic scale unit.' },
+			{ s: 'in', f: 'inch', n: 'Inch (英寸)', c: 'Length', d: '25.4 mm exactly.' },
+			{ s: 'ft', f: 'foot', n: 'Foot (英尺)', c: 'Length', d: '12 inches. ~0.3048m.' },
+			{ s: 'yd', f: 'yard', n: 'Yard (码)', c: 'Length', d: '3 feet. ~0.9144m.' },
+			{ s: 'mi', f: 'mile', n: 'Mile (英里)', c: 'Length', d: '5,280 feet. ~1.609 km.' },
+			{ s: 'nautical_mile', f: 'nautical_mile', n: 'Naut. Mile (海里)', c: 'Length', d: '1,852 meters exactly.' },
+			{ s: 'ly', f: 'lightyear', n: 'Light Year (光年)', c: 'Length', d: 'Astro-scale distance.' },
+			{ s: 'au', f: 'astronomical_unit', n: 'AU (天文单位)', c: 'Length', d: 'Sun-Earth distance.' },
+
+			// Mass
+			{ s: 'kg', f: 'kilogram', n: 'Kilogram (千克)', c: 'Mass', d: 'Core SI mass unit.' },
+			{ s: 'g', f: 'gram', n: 'Gram (克)', c: 'Mass', d: '1/1,000 of a kilogram.' },
+			{ s: 'mg', f: 'milligram', n: 'Milligram (毫克)', c: 'Mass', d: '10^-6 kg.' },
+			{ s: 'ug', f: 'microgram', n: 'Microgram (微克)', c: 'Mass', d: '10^-9 kg.' },
+			{ s: 't', f: 'tonne', n: 'Tonne (吨)', c: 'Mass', d: '1,000 kg (Metric Ton).' },
+			{ s: 'lb', f: 'pound', n: 'Pound (磅)', c: 'Mass', d: 'Imperial mass (~0.4536 kg).' },
+			{ s: 'oz', f: 'ounce', n: 'Ounce (盎司)', c: 'Mass', d: '1/16th of a pound.' },
+			{ s: 'stone', f: 'stone', n: 'Stone (石)', c: 'Mass', d: '14 pounds.' },
+			{ s: 'jin', f: 'jin', n: 'Jin (斤)', c: 'Mass', d: 'Chinese unit (0.5 kg).' },
+			{ s: 'liang', f: 'liang', n: 'Liang (两)', c: 'Mass', d: 'Chinese unit (50 g).' },
+
+			// Time
+			{ s: 's', f: 'second', n: 'Second (秒)', c: 'Time', d: 'The universal base interval.' },
+			{ s: 'ms', f: 'millisecond', n: 'Millisecond (毫秒)', c: 'Time', d: '0.001 seconds.' },
+			{ s: 'min', f: 'minute', n: 'Minute (分钟)', c: 'Time', d: '60 seconds.' },
+			{ s: 'h', f: 'hour', n: 'Hour (小时)', c: 'Time', d: '3,600 seconds.' },
+			{ s: 'day', f: 'day', n: 'Day (天)', c: 'Time', d: '24 hours.' },
+			{ s: 'week', f: 'week', n: 'Week (周)', c: 'Time', d: '7 calendar days.' },
+			{ s: 'yr', f: 'year', n: 'Year (年)', c: 'Time', d: '365.25 standard days.' },
+
+			// Pressure
+			{ s: 'Pa', f: 'pascal', n: 'Pascal (帕)', c: 'Pressure', d: 'SI unit. Force of 1N/m².' },
+			{ s: 'kPa', f: 'kilopascal', n: 'kPa (千帕)', c: 'Pressure', d: '1,000 Pascals.' },
+			{ s: 'MPa', f: 'megapascal', n: 'MPa (兆帕)', c: 'Pressure', d: '10^6 Pascals.' },
+			{ s: 'GPa', f: 'gigapascal', n: 'GPa (吉帕)', c: 'Pressure', d: '10^9 Pascals.' },
+			{ s: 'bar', f: 'bar', n: 'Bar (巴)', c: 'Pressure', d: '100,000 Pa (~1 atm).' },
+			{ s: 'atm', f: 'atmosphere', n: 'Atm (标准大气压)', c: 'Pressure', d: 'Earth surface standard.' },
+			{ s: 'psi', f: 'psi', n: 'PSI', c: 'Pressure', d: 'Pounds per square inch.' },
+			{ s: 'torr', f: 'torr', n: 'Torr', c: 'Pressure', d: '1/760 of an atomosphere.' },
+
+			// Force / Energy / Power
+			{ s: 'N', f: 'newton', n: 'Newton (牛顿)', c: 'Force', d: '1kg * 1m/s².' },
+			{ s: 'kN', f: 'kilonewton', n: 'kN (千牛)', c: 'Force', d: '1,000 Newtons.' },
+			{ s: 'lbf', f: 'pound_force', n: 'Lbf (磅力)', c: 'Force', d: 'Imperial force unit.' },
+			{ s: 'J', f: 'joule', n: 'Joule (焦耳)', c: 'Energy', d: 'Work done by 1N over 1m.' },
+			{ s: 'kJ', f: 'kilojoule', n: 'kJ (千焦)', c: 'Energy', d: '1,000 Joules.' },
+			{ s: 'cal', f: 'calorie', n: 'Calorie (卡)', c: 'Energy', d: 'Heat energy (4.184 J).' },
+			{ s: 'kcal', f: 'kilocalorie', n: 'Kcal (大卡)', c: 'Energy', d: 'Food metabolic energy.' },
+			{ s: 'Wh', f: 'watt_hour', n: 'Wh (瓦时)', c: 'Energy', d: 'Electrical energy unit.' },
+			{ s: 'kWh', f: 'kilowatt_hour', n: 'kWh (度)', c: 'Energy', d: '3.6*10^6 Joules.' },
+			{ s: 'W', f: 'watt', n: 'Watt (瓦特)', c: 'Power', d: '1 Joule per second.' },
+			{ s: 'kW', f: 'kilowatt', n: 'kW (千瓦)', c: 'Power', d: '1,000 Watts.' },
+			{ s: 'hp', f: 'horsepower', n: 'HP (马力)', c: 'Power', d: 'Mechanical output (~746W).' },
+
+			// Frequency / Temp / Velocity
+			{ s: 'Hz', f: 'hertz', n: 'Hertz (赫兹)', c: 'Frequency', d: 'Cycles per second.' },
+			{ s: 'm/s', f: 'm/s', n: 'm/s (米/秒)', c: 'Speed', d: 'Primary SI speed.' },
+			{ s: 'km/h', f: 'km/h', n: 'km/hour', c: 'Speed', d: 'Navigational speed.' },
+			{ s: 'mph', f: 'mph', n: 'mph', c: 'Speed', d: 'Imperial speed unit.' },
+			{ s: 'degC', f: 'celsius', n: 'Celsius (摄氏度)', c: 'Temp', d: 'Relative scale.' },
+			{ s: 'degF', f: 'fahrenheit', n: 'Fahrenheit (华氏度)', c: 'Temp', d: 'Traditional scale.' },
+			{ s: 'K', f: 'kelvin', n: 'Kelvin', c: 'Temp', d: 'Absolute thermal unit.' }
+		];
+
+		function showTab(id, btn) {
+			document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+			document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
+			document.getElementById(id).classList.add('active');
+			btn.classList.add('active');
+			lucide.createIcons();
+		}
+
+		function setupAuto(inputId, listId) {
+			const input = document.getElementById(inputId);
+			const list = document.getElementById(listId);
+			input.addEventListener('input', () => {
+				const q = input.value.toLowerCase().trim();
+				if (!q) { list.style.display = 'none'; return; }
+				const hits = UNIT_KB.filter(u =>
+					u.s.toLowerCase().includes(q) ||
+					u.n.toLowerCase().includes(q) ||
+					u.f.toLowerCase().includes(q)
+				).slice(0, 8);
+				if (!hits.length) { list.style.display = 'none'; return; }
+				list.innerHTML = hits.map(u => `
+                    <div class="suggestion-item" onclick="pick('${inputId}', '${u.s}')">
+                        <div class="item-top">
+                            <span class="item-code">${u.s}</span>
+                            <span class="item-tag">${u.c}</span>
+                        </div>
+                        <div class="item-full">${u.n}</div>
+                        <div class="item-desc">${u.d}</div>
+                    </div>
+                `).join('');
+				list.style.display = 'block';
+			});
+			input.addEventListener('blur', () => setTimeout(() => list.style.display = 'none', 300));
+		}
+
+		window.pick = (id, val) => {
+			document.getElementById(id).value = val;
+			document.querySelectorAll('.suggestions').forEach(l => l.style.display = 'none');
+		};
+
+		['simpleFrom', 'simpleTo'].forEach(id => setupAuto(id, 'auto' + id.charAt(0).toUpperCase() + id.slice(1)));
+
+		function simpleConvert() {
+			const val = parseFloat(document.getElementById('simpleValue').value);
+			const from = document.getElementById('simpleFrom').value;
+			const to = document.getElementById('simpleTo').value;
+			const res = document.getElementById('simpleResult');
+			const now = new Date().toLocaleTimeString();
+			try {
+				const converted = math.unit(val, from).to(to);
+				res.innerHTML = `
+					<div class="result-header">
+						<span>Browser Calculation</span>
+						<span style="opacity:0.5;">${now}</span>
+					</div>
+					<div class="result-body">
+						<div class="result-text">
+							<span class="val">${val}</span> <span class="unit">${from}</span>
+							<span class="arrow">→</span>
+							<span class="final">${Number(converted.value.toPrecision(10))}</span> <span class="unit">${to}</span>
+						</div>
+					</div>`;
+				res.classList.add('show');
+			} catch (e) { res.innerHTML = `<div style="padding:24px; color:#f43f5e; font-weight:700;">${e.message}</div>`; res.classList.add('show'); }
+		}
+
+		class UniUnitSystem {
+			constructor(unitsDict) { this.unitsDict = unitsDict; }
+			convert(input) {
+				const u = math.unit(input);
+				const dims = u.dimensions;
+				const targetUnits = { mass: this.unitsDict.kg || 'kg', length: this.unitsDict.m || 'm', time: this.unitsDict.s || 's' };
+				const dimNames = ['mass', 'length', 'time'];
+				let targetUnitStr = "";
+				for (let i = 0; i < 3; i++) {
+					const exp = dims[i];
+					if (exp === 0) continue;
+					const unit = targetUnits[dimNames[i]];
+					targetUnitStr += (targetUnitStr ? "*" : "") + (exp === 1 ? unit : `${unit}^${exp}`);
+				}
+				return u.to(targetUnitStr || '1');
+			}
+		}
+
+		function systemConvert() {
+			const v = document.getElementById('systemValue').value;
+			const u = document.getElementById('systemUnits').value;
+			const res = document.getElementById('systemResult');
+			const now = new Date().toLocaleTimeString();
+			try {
+				const converter = new UniUnitSystem(JSON.parse(u));
+				const result = converter.convert(v);
+				res.innerHTML = `
+					<div class="result-header">
+						<span>Foundation Projection</span>
+						<span style="opacity:0.5;">${now}</span>
+					</div>
+					<div class="result-body">
+						<div class="result-text">
+							<span class="final">${result.toString()}</span>
+						</div>
+					</div>`;
+				res.classList.add('show');
+			} catch (e) { res.innerHTML = `<div style="padding:24px; color:#f43f5e; font-weight:700;">${e.message}</div>`; res.classList.add('show'); }
+		}
+
+		function presetConvert() {
+			const v = document.getElementById('presetValue').value;
+			const to = document.getElementById('presetTo').value;
+			const res = document.getElementById('presetResult');
+			const now = new Date().toLocaleTimeString();
+			try {
+				const presets = { SI: { kg: 'kg', m: 'm', s: 's' }, CGS: { kg: 'g', m: 'cm', s: 's' }, mmkgms: { kg: 'kg', m: 'mm', s: 'ms' }, Imperial: { kg: 'lb', m: 'in', s: 's' } };
+				const converter = new UniUnitSystem(presets[to] || presets.SI);
+				const result = converter.convert(v);
+				res.innerHTML = `
+					<div class="result-header">
+						<span>System Swap</span>
+						<span style="opacity:0.5;">${now}</span>
+					</div>
+					<div class="result-body">
+						<div class="result-text">
+							<span class="final">${result.toString()}</span>
+						</div>
+					</div>`;
+				res.classList.add('show');
+			} catch (e) { res.innerHTML = `<div style="padding:24px; color:#f43f5e; font-weight:700;">${e.message}</div>`; res.classList.add('show'); }
+		}
+	</script>
 </body>
+
 </html>
