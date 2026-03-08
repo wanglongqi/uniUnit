@@ -10,6 +10,8 @@
 	<link
 		href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap"
 		rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+	<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
 	<script src="https://unpkg.com/lucide@latest"></script>
 	<link rel="stylesheet" href="modern.css">
 </head>
@@ -95,7 +97,9 @@
 					<div class="form-section">
 						<div class="field">
 							<label>Input Expression</label>
-							<input type="text" id="systemValue" value="100 N" placeholder="e.g., 50 m/s">
+							<input type="text" id="systemValue" value="100 N" placeholder="e.g., 50 m/s"
+								autocomplete="off">
+							<div id="autoSystemValue" class="suggestions" style="display:none;"></div>
 						</div>
 						<div class="field">
 							<label>Base JSON Rules</label>
@@ -122,7 +126,8 @@
 					<div class="form-section">
 						<div class="field">
 							<label>Input Expression</label>
-							<input type="text" id="presetValue" value="100 kg">
+							<input type="text" id="presetValue" value="100 kg" autocomplete="off">
+							<div id="autoPresetValue" class="suggestions" style="display:none;"></div>
 						</div>
 						<div class="form-row">
 							<div class="field">
@@ -156,7 +161,8 @@
 		</main>
 	</div>
 
-<script src="node_modules/mathjs/lib/browser/math.js"></script>
-<script src="engine.js"></script>
+	<script src="node_modules/mathjs/lib/browser/math.js"></script>
+	<script src="engine.js"></script>
 </body>
+
 </html>

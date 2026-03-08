@@ -61,7 +61,8 @@ async def convert_units(request: ConversionRequest):
             "value": request.value,
             "from_unit": request.from_unit,
             "to_unit": request.to_unit,
-            "result": result
+            "result": result,
+            "result_tex": f"{result} \\mathrm{{{request.to_unit}}}"
         }
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
@@ -80,22 +81,31 @@ async def convert_with_system(request: UnitSystemRequest):
         
         result = converter.to_unit(q)
         
+        unit_tex = f"{result:~L}".replace("\\text{", "\\mathrm{")
+        if "\\mathrm" not in unit_tex:
+            unit_tex = unit_tex.replace("{", "\\mathrm{", 1) + "}" if "{" in unit_tex else f"\\mathrm{{{unit_tex}}}"
+
         return {
             "value": request.value,
             "units": request.units,
-            "result": f"{result:~}"
+            "result": f"{result:~}",
+            "result_tex": unit_tex
         }
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
 
 def format_quantity(q):
-    """Format quantity with reasonable precision and compact units"""
+    """Format quantity with reasonable precision. Returns (string, tex)"""
     mag = q.magnitude
+    unit_tex = f"{q.units:~L}".replace("\\text{", "\\mathrm{")
+    if "\\mathrm" not in unit_tex:
+        unit_tex = f"\\mathrm{{{unit_tex}}}"
+        
     if abs(mag) < 0.001 or abs(mag) > 10000:
-        return f"{mag:.8g} {q.units:~}"
+        return f"{mag:.8g} {q.units:~}", f"{mag:.8g} {unit_tex}"
     else:
-        return f"{mag:.5g} {q.units:~}"
+        return f"{mag:.5g} {q.units:~}", f"{mag:.5g} {unit_tex}"
 
 
 @router.post("/api/quick-convert")
@@ -103,11 +113,13 @@ async def convert_systems(request: QuickConvertRequest):
     """Quick convert between two preset unit systems"""
     try:
         result = quick_convert(request.value, request.from_system, request.to_system)
+        res, tex = format_quantity(result)
         return {
             "value": str(request.value),
             "from_system": request.from_system,
             "to_system": request.to_system,
-            "result": format_quantity(result)
+            "result": res,
+            "result_tex": tex
         }
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))

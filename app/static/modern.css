@@ -329,10 +329,18 @@ textarea:focus {
     font-weight: 700;
     letter-spacing: -0.02em;
     display: flex;
-    align-items: baseline;
+    align-items: center;
     flex-wrap: wrap;
     gap: 4px;
     word-break: break-all;
+    padding: 15px 0;
+    /* Expanded space for tall displaystyle fractions */
+}
+
+.result-text .katex {
+    font-size: 1.5rem;
+    /* Increased from 1.1em for maximum visibility */
+    margin: 0 4px;
 }
 
 .result-text .val {

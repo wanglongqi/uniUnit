@@ -10,6 +10,8 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap"
         rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="stylesheet" href="/static/modern.css">
 </head>
@@ -106,7 +108,9 @@
                     <div class="form-section">
                         <div class="field">
                             <label>Physical Expression</label>
-                            <input type="text" id="systemValue" value="100 kg * m / s^2" placeholder="e.g., 50 m/s^2">
+                            <input type="text" id="systemValue" value="100 kg * m / s^2" placeholder="e.g., 50 m/s^2"
+                                autocomplete="off">
+                            <div id="autoSystemValue" class="suggestions" style="display:none;"></div>
                         </div>
                         <div class="field">
                             <label>Base Target Definitions (JSON Mapping)</label>
@@ -134,7 +138,8 @@
                     <div class="form-section">
                         <div class="field">
                             <label>Input Quantity</label>
-                            <input type="text" id="presetValue" value="9.8 m/s^2">
+                            <input type="text" id="presetValue" value="9.8 m/s^2" autocomplete="off">
+                            <div id="autoPresetValue" class="suggestions" style="display:none;"></div>
                         </div>
                         <div class="form-row">
                             <div class="field">
@@ -174,7 +179,8 @@
                     <div class="form-section">
                         <div class="field">
                             <label>Inspection String</label>
-                            <input type="text" id="infoUnit" value="newton * meter / second^2">
+                            <input type="text" id="infoUnit" value="newton * meter / second^2" autocomplete="off">
+                            <div id="autoInfoUnit" class="suggestions" style="display:none;"></div>
                         </div>
                         <div>
                             <button class="btn" onclick="getInfo()">
@@ -192,7 +198,7 @@
         lucide.createIcons();
 
         // COMPREHENSIVE UNIT KNOWLEDGE BASE 
-        let UNIT_KB = [
+        const UNIT_KB = [
             // Length
             { s: 'm', f: 'meter', n: 'Meter (米)', c: 'Length', d: 'Base SI unit. ~3.28 ft.' },
             { s: 'km', f: 'kilometer', n: 'Kilometer (千米)', c: 'Length', d: '1,000 meters.' },
@@ -207,13 +213,17 @@
             { s: 'nautical_mile', f: 'nautical_mile', n: 'Naut. Mile (海里)', c: 'Length', d: '1,852 meters exactly.' },
             { s: 'ly', f: 'lightyear', n: 'Light Year (光年)', c: 'Length', d: 'Astro-scale distance.' },
             { s: 'au', f: 'astronomical_unit', n: 'AU (天文单位)', c: 'Length', d: 'Sun-Earth distance.' },
+            { s: 'pc', f: 'parsec', n: 'Parsec (秒差距)', c: 'Length', d: '3.26 light years.' },
+            { s: 'angstrom', f: 'angstrom', n: 'Angstrom (埃)', c: 'Length', d: '10^-10 meters.' },
 
             // Mass
             { s: 'kg', f: 'kilogram', n: 'Kilogram (千克)', c: 'Mass', d: 'Core SI mass unit.' },
             { s: 'g', f: 'gram', n: 'Gram (克)', c: 'Mass', d: '1/1,000 of a kilogram.' },
             { s: 'mg', f: 'milligram', n: 'Milligram (毫克)', c: 'Mass', d: '10^-6 kg.' },
             { s: 'ug', f: 'microgram', n: 'Microgram (微克)', c: 'Mass', d: '10^-9 kg.' },
-            { s: 't', f: 'tonne', n: 'Tonne (吨)', c: 'Mass', d: '1,000 kg (Metric Ton).' },
+            { s: 't', f: 'tonne', n: 'Tonne (公吨)', c: 'Mass', d: '1,000 kg (Metric Ton).' },
+            { s: 'ton', f: 'ton', n: 'Ton (短吨)', c: 'Mass', d: 'Short/US ton (~907 kg).' },
+            { s: 'long_ton', f: 'long_ton', n: 'Long Ton (长吨)', c: 'Mass', d: 'UK ton (~1016 kg).' },
             { s: 'lb', f: 'pound', n: 'Pound (磅)', c: 'Mass', d: 'Imperial mass (~0.4536 kg).' },
             { s: 'oz', f: 'ounce', n: 'Ounce (盎司)', c: 'Mass', d: '1/16th of a pound.' },
             { s: 'stone', f: 'stone', n: 'Stone (石)', c: 'Mass', d: '14 pounds.' },
@@ -238,29 +248,48 @@
             { s: 'atm', f: 'atmosphere', n: 'Atm (标准大气压)', c: 'Pressure', d: 'Earth surface standard.' },
             { s: 'psi', f: 'psi', n: 'PSI', c: 'Pressure', d: 'Pounds per square inch.' },
             { s: 'torr', f: 'torr', n: 'Torr', c: 'Pressure', d: '1/760 of an atomosphere.' },
+            { s: 'mmHg', f: 'mmHg', n: 'mmHg', c: 'Pressure', d: 'Millimeters of Mercury.' },
 
             // Force / Energy / Power
             { s: 'N', f: 'newton', n: 'Newton (牛顿)', c: 'Force', d: '1kg * 1m/s².' },
             { s: 'kN', f: 'kilonewton', n: 'kN (千牛)', c: 'Force', d: '1,000 Newtons.' },
             { s: 'lbf', f: 'pound_force', n: 'Lbf (磅力)', c: 'Force', d: 'Imperial force unit.' },
+            { s: 'dyn', f: 'dyne', n: 'Dyne (达因)', c: 'Force', d: 'CGS unit of force (10^-5 N).' },
             { s: 'J', f: 'joule', n: 'Joule (焦耳)', c: 'Energy', d: 'Work done by 1N over 1m.' },
             { s: 'kJ', f: 'kilojoule', n: 'kJ (千焦)', c: 'Energy', d: '1,000 Joules.' },
             { s: 'cal', f: 'calorie', n: 'Calorie (卡)', c: 'Energy', d: 'Heat energy (4.184 J).' },
             { s: 'kcal', f: 'kilocalorie', n: 'Kcal (大卡)', c: 'Energy', d: 'Food metabolic energy.' },
             { s: 'Wh', f: 'watt_hour', n: 'Wh (瓦时)', c: 'Energy', d: 'Electrical energy unit.' },
             { s: 'kWh', f: 'kilowatt_hour', n: 'kWh (度)', c: 'Energy', d: '3.6*10^6 Joules.' },
+            { s: 'eV', f: 'electronvolt', n: 'eV (电子伏特)', c: 'Energy', d: 'Atomic scale energy.' },
+            { s: 'erg', f: 'erg', n: 'Erg (尔格)', c: 'Energy', d: 'CGS unit (10^-7 J).' },
             { s: 'W', f: 'watt', n: 'Watt (瓦特)', c: 'Power', d: '1 Joule per second.' },
             { s: 'kW', f: 'kilowatt', n: 'kW (千瓦)', c: 'Power', d: '1,000 Watts.' },
             { s: 'hp', f: 'horsepower', n: 'HP (马力)', c: 'Power', d: 'Mechanical output (~746W).' },
 
             // Frequency / Temp / Velocity
             { s: 'Hz', f: 'hertz', n: 'Hertz (赫兹)', c: 'Frequency', d: 'Cycles per second.' },
+            { s: 'rad/s', f: 'rad/s', n: 'rad/s (弧度/秒)', c: 'Freq', d: 'Angular frequency.' },
             { s: 'm/s', f: 'm/s', n: 'm/s (米/秒)', c: 'Speed', d: 'Primary SI speed.' },
             { s: 'km/h', f: 'km/h', n: 'km/hour', c: 'Speed', d: 'Navigational speed.' },
             { s: 'mph', f: 'mph', n: 'mph', c: 'Speed', d: 'Imperial speed unit.' },
             { s: 'degC', f: 'celsius', n: 'Celsius (摄氏度)', c: 'Temp', d: 'Relative scale.' },
             { s: 'degF', f: 'fahrenheit', n: 'Fahrenheit (华氏度)', c: 'Temp', d: 'Traditional scale.' },
-            { s: 'K', f: 'kelvin', n: 'Kelvin', c: 'Temp', d: 'Absolute thermal unit.' }
+            { s: 'K', f: 'kelvin', n: 'Kelvin', c: 'Temp', d: 'Absolute thermal unit.' },
+
+            // Area / Volume
+            { s: 'ha', f: 'hectare', n: 'Hectare (公顷)', c: 'Area', d: '10,000 m².' },
+            { s: 'acre', f: 'acre', n: 'Acre (英亩)', c: 'Area', d: 'Imperial area unit.' },
+            { s: 'l', f: 'liter', n: 'Liter (升)', c: 'Volume', d: 'Metric unit (0.001 m³).' },
+            { s: 'ml', f: 'milliliter', n: 'Milliliter (毫升)', c: 'Volume', d: '0.001 Liters.' },
+            { s: 'gal', f: 'gallon', n: 'Gallon (加仑)', c: 'Volume', d: 'US Liquid (~3.785 L).' },
+            { s: 'qt', f: 'quart', n: 'Quart (夸脱)', c: 'Volume', d: '1/4th of a gallon.' },
+
+            // Angle
+            { s: 'rad', f: 'radian', n: 'Radian (弧度)', c: 'Angle', d: 'SI base angle unit.' },
+            { s: 'deg', f: 'degree', n: 'Degree (度)', c: 'Angle', d: 'Planar angle unit.' },
+            { s: 'arcmin', f: 'arcminute', n: 'Arcminute', c: 'Angle', d: '1/60th of a degree.' },
+            { s: 'arcsec', f: 'arcsecond', n: 'Arcsecond', c: 'Angle', d: '1/60th of an arcmin.' }
         ];
 
         let PRESETS_DATA = {};
@@ -368,12 +397,15 @@
             const input = document.getElementById(inputId);
             const list = document.getElementById(listId);
             input.addEventListener('input', () => {
-                const q = input.value.toLowerCase().trim();
-                if (!q) { list.style.display = 'none'; return; }
+                const val = input.value;
+                const parts = val.split(/[\s*\/^]+/);
+                const last = parts[parts.length - 1].toLowerCase().trim();
+
+                if (!last || last.length < 1) { list.style.display = 'none'; return; }
                 const hits = UNIT_KB.filter(u =>
-                    u.s.toLowerCase().includes(q) ||
-                    u.n.toLowerCase().includes(q) ||
-                    u.f.toLowerCase().includes(q)
+                    u.s.toLowerCase().includes(last) ||
+                    u.n.toLowerCase().includes(last) ||
+                    u.f.toLowerCase().includes(last)
                 ).slice(0, 10);
                 if (!hits.length) { list.style.display = 'none'; return; }
                 list.innerHTML = hits.map(u => `
@@ -392,13 +424,46 @@
         }
 
         window.pick = (id, val) => {
-            document.getElementById(id).value = val;
+            const input = document.getElementById(id);
+            const current = input.value;
+            // Replace the last word
+            const lastWordMatch = current.match(/([a-zA-Z]+)$/);
+            if (lastWordMatch) {
+                input.value = current.substring(0, lastWordMatch.index) + val;
+            } else {
+                input.value = val;
+            }
             document.querySelectorAll('.suggestions').forEach(l => l.style.display = 'none');
+            input.focus();
         };
 
-        ['simpleFrom', 'simpleTo'].forEach(id => setupAuto(id, 'auto' + id.charAt(0).toUpperCase() + id.slice(1)));
+        ['simpleFrom', 'simpleTo', 'systemValue', 'presetValue', 'infoUnit'].forEach(id => {
+            const el = document.getElementById(id);
+            const listId = 'auto' + id.charAt(0).toUpperCase() + id.slice(1);
+            if (el && document.getElementById(listId)) setupAuto(id, listId);
+        });
 
 
+
+        function renderTex(container, tex) {
+            if (!container || !tex) return;
+            try {
+                if (!window.katex) {
+                    container.textContent = tex;
+                    return;
+                }
+                // Academic standard: roman font for units. 
+                // Only wrap if it doesn't already contain structural LaTeX
+                let finalTex = tex;
+                if (!finalTex.includes('\\mathrm')) {
+                    finalTex = finalTex.replace(/\b([a-zA-Z]+)\b/g, '\\mathrm{$1}');
+                }
+                // Force displaystyle to ensure fractions are large
+                katex.render(`\\displaystyle{${finalTex}}`, container, { throwOnError: false });
+            } catch (e) {
+                container.textContent = tex;
+            }
+        }
 
         function showError(container, title, message) {
             const now = new Date().toLocaleTimeString();
@@ -428,6 +493,7 @@
                 const data = await response.json();
                 if (!response.ok) throw new Error(data.detail);
                 const unitInfo = UNIT_KB.find(u => u.s === t) || { n: t, d: 'Dynamic Engine Unit' };
+                // Split value and unit from result if possible (fringe case)
                 res.innerHTML = `
                     <div class="result-header">
                         <span>Scalar Transformation</span>
@@ -435,16 +501,17 @@
                     </div>
                     <div class="result-body">
                         <div class="result-text">
-                            <span class="val">${v}</span> <span class="unit">${f}</span> 
+                            <span class="val">${v}</span> <span class="unit" id="simpleFromTex"></span> 
                             <span class="arrow">→</span> 
-                            <span class="final">${data.result.toLocaleString('en-US', { maximumFractionDigits: 10 })}</span> 
-                            <span class="unit">${t}</span>
+                            <span class="final" id="simpleResultTex"></span>
                         </div>
                         <div class="result-hint">
                             <i data-lucide="info"></i>
                             <span>Target Unit: <b>${unitInfo.n}</b> — ${unitInfo.d}</span>
                         </div>
                     </div>`;
+                renderTex(document.getElementById('simpleFromTex'), f);
+                renderTex(document.getElementById('simpleResultTex'), data.result_tex);
                 res.classList.add('show');
                 lucide.createIcons();
             } catch (e) { showError(res, 'Transformation Failed', e.message); }
@@ -464,14 +531,13 @@
                         <span style="opacity: 0.5;">${now}</span>
                     </div>
                     <div class="result-body">
-                        <div class="result-text">
-                            <span class="final">${data.result}</span>
-                        </div>
+                        <div class="result-text" id="systemResultTex"></div>
                         <div class="result-hint">
                             <i data-lucide="compass"></i>
                             <span>Target Framework: <b>${Object.values(JSON.parse(u)).join('-')}</b> Mapping</span>
                         </div>
                     </div>`;
+                renderTex(document.getElementById('systemResultTex'), data.result_tex || data.result);
                 res.classList.add('show');
                 lucide.createIcons();
             } catch (e) { showError(res, 'Projection Failed', e.message); }
@@ -490,14 +556,13 @@
                         <span style="opacity: 0.5;">${now}</span>
                     </div>
                     <div class="result-body">
-                        <div class="result-text">
-                            <span class="final">${data.result}</span>
-                        </div>
+                        <div class="result-text" id="presetResultTex"></div>
                         <div class="result-hint">
                             <i data-lucide="layers"></i>
                             <span>Target System: <b>${document.getElementById('presetTo').value}</b> Standards</span>
                         </div>
                     </div>`;
+                renderTex(document.getElementById('presetResultTex'), data.result_tex || data.result);
                 res.classList.add('show');
                 lucide.createIcons();
             } catch (e) { showError(res, 'Transition Failed', e.message); }
