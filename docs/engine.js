@@ -1,4 +1,7 @@
 if (window.lucide) lucide.createIcons();
+if (typeof math !== 'undefined') {
+  try { math.createUnit('T', '1000 kg', { override: true }); } catch (e) { }
+}
 
 function initTheme() {
   const saved = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
@@ -50,7 +53,7 @@ const UNIT_KB = [
   { s: 'g', f: 'gram', n: 'Gram (克)', c: 'Mass', d: '1/1,000 of a kilogram.' },
   { s: 'mg', f: 'milligram', n: 'Milligram (毫克)', c: 'Mass', d: '10^-6 kg.' },
   { s: 'ug', f: 'microgram', n: 'Microgram (微克)', c: 'Mass', d: '10^-9 kg.' },
-  { s: 't', f: 'tonne', n: 'Tonne (公吨)', c: 'Mass', d: '1,000 kg (Metric Ton).' },
+  { s: 'T', f: 'tonne', n: 'Tonne (公吨)', c: 'Mass', d: '1,000 kg (Metric Ton).' },
   { s: 'ton', f: 'ton', n: 'Ton (短吨)', c: 'Mass', d: 'Short/US ton (~907 kg).' },
   { s: 'long_ton', f: 'long_ton', n: 'Long Ton (长吨)', c: 'Mass', d: 'UK ton (~1016 kg).' },
   { s: 'lb', f: 'pound', n: 'Pound (磅)', c: 'Mass', d: 'Imperial mass (~0.4536 kg).' },

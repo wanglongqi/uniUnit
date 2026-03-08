@@ -9,6 +9,13 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from uniunit import uniUnit, UnitSystem, ureg, unit, CHINESE_UNITS
 from uniunit.uniunit import convert_value, get_unit_info, quick_convert
 
+# Academic requirement: normal representation of tonne is T (in some regions)
+# We override T (Tesla) with Tonne as requested by user.
+try:
+    ureg.define('tonne = 1000 kg = T')
+except:
+    pass
+
 router = APIRouter()
 
 
@@ -57,12 +64,13 @@ async def convert_units(request: ConversionRequest):
     """Simple unit conversion between two units"""
     try:
         result = convert_value(request.value, request.from_unit, request.to_unit)
+        fmag = format_val(result)
         return {
             "value": request.value,
             "from_unit": request.from_unit,
             "to_unit": request.to_unit,
-            "result": result,
-            "result_tex": f"{result} \\mathrm{{{request.to_unit}}}"
+            "result": fmag,
+            "result_tex": f"{fmag} \\mathrm{{{request.to_unit}}}"
         }
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
@@ -85,27 +93,43 @@ async def convert_with_system(request: UnitSystemRequest):
         if "\\mathrm" not in unit_tex:
             unit_tex = unit_tex.replace("{", "\\mathrm{", 1) + "}" if "{" in unit_tex else f"\\mathrm{{{unit_tex}}}"
 
+        fmag = format_val(result.magnitude)
+        unit_tex = f"{result:~L}".replace("\\text{", "\\mathrm{")
+        if "\\mathrm" not in unit_tex:
+            unit_tex = unit_tex.replace("{", "\\mathrm{", 1) + "}" if "{" in unit_tex else f"\\mathrm{{{unit_tex}}}"
+
         return {
             "value": request.value,
             "units": request.units,
-            "result": f"{result:~}",
-            "result_tex": unit_tex
+            "result": f"{fmag} {result.units:~}",
+            "result_tex": f"{fmag} {unit_tex}"
         }
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
 
+def format_val(val):
+    """Format numeric value with commas and reasonable precision"""
+    if isinstance(val, (int, float)):
+        # For very large or very small, use scientific
+        if abs(val) > 0 and (abs(val) < 0.0001 or abs(val) > 1e12):
+            return f"{val:,.8g}"
+        # For others, use commas and avoid trailing zeros
+        formatted = f"{val:,.6f}".rstrip('0').rstrip('.')
+        return formatted
+    return str(val)
+
+
 def format_quantity(q):
     """Format quantity with reasonable precision. Returns (string, tex)"""
     mag = q.magnitude
+    fmag = format_val(mag)
+    
     unit_tex = f"{q.units:~L}".replace("\\text{", "\\mathrm{")
     if "\\mathrm" not in unit_tex:
         unit_tex = f"\\mathrm{{{unit_tex}}}"
         
-    if abs(mag) < 0.001 or abs(mag) > 10000:
-        return f"{mag:.8g} {q.units:~}", f"{mag:.8g} {unit_tex}"
-    else:
-        return f"{mag:.5g} {q.units:~}", f"{mag:.5g} {unit_tex}"
+    return f"{fmag} {q.units:~}", f"{fmag} {unit_tex}"
 
 
 @router.post("/api/quick-convert")
