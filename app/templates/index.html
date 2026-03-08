@@ -21,6 +21,9 @@
     <div class="mobile-header">
         <img src="/static/logo.png" alt="Logo">
         <span>uniUnit</span>
+        <button class="mobile-theme-btn" onclick="toggleTheme()">
+            <i id="mobileThemeIcon" data-lucide="moon"></i>
+        </button>
     </div>
 
     <!-- Mobile Navigation -->
@@ -215,12 +218,6 @@
             </div>
         </main>
     </div>
-
-    <!-- Mobile Theme Toggle -->
-    <button class="mobile-theme-btn" onclick="toggleTheme()">
-        <i id="mobileThemeIcon" data-lucide="moon"></i>
-        <span id="mobileThemeLabel">Dark</span>
-    </button>
 
     <script>
         lucide.createIcons();

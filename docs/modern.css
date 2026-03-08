@@ -510,9 +510,8 @@ textarea:focus {
     .mobile-header {
         display: flex;
         align-items: center;
-        justify-content: center;
-        gap: 10px;
-        padding: 16px;
+        justify-content: space-between;
+        padding: 12px 16px;
         background: var(--sidebar-bg);
         border-bottom: 1px solid var(--gray-200);
     }
@@ -524,9 +523,28 @@ textarea:focus {
     }
 
     .mobile-header span {
+        flex: 1;
         font-weight: 700;
         font-size: 1.3rem;
         color: var(--text-main);
+        text-align: center;
+        margin-right: 40px;
+    }
+
+    .mobile-header .mobile-theme-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: none;
+        border: none;
+        padding: 8px;
+        cursor: pointer;
+        color: var(--text-muted);
+        border-radius: 8px;
+    }
+
+    .mobile-header .mobile-theme-btn:hover {
+        background: var(--gray-100);
     }
 
     .mobile-nav {
@@ -566,31 +584,5 @@ textarea:focus {
 
     .btn {
         width: 100%;
-    }
-
-    .mobile-theme-btn {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        position: fixed;
-        bottom: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: var(--card-bg);
-        border: 1px solid var(--gray-200);
-        border-radius: 24px;
-        padding: 12px 24px;
-        color: var(--text-muted);
-        font-size: 0.9rem;
-        font-weight: 500;
-        cursor: pointer;
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
-        z-index: 100;
-    }
-
-    .mobile-theme-btn:hover {
-        background: var(--gray-50);
-        color: var(--text-main);
     }
 }
