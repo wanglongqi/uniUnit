@@ -17,6 +17,28 @@
 </head>
 
 <body>
+    <!-- Mobile Header -->
+    <div class="mobile-header">
+        <img src="/static/logo.png" alt="Logo">
+        <span>uniUnit</span>
+    </div>
+
+    <!-- Mobile Navigation -->
+    <div class="mobile-nav">
+        <button class="nav-link active" onclick="showTab('simple', this)">
+            <i data-lucide="zap"></i> Quick
+        </button>
+        <button class="nav-link" onclick="showTab('system', this)">
+            <i data-lucide="layout-grid"></i> Map
+        </button>
+        <button class="nav-link" onclick="showTab('presets', this)">
+            <i data-lucide="layers"></i> Presets
+        </button>
+        <button class="nav-link" onclick="showTab('info', this)">
+            <i data-lucide="microscope"></i> Info
+        </button>
+    </div>
+
     <div class="layout">
         <aside class="sidebar">
             <div class="logo">
@@ -194,6 +216,12 @@
         </main>
     </div>
 
+    <!-- Mobile Theme Toggle -->
+    <button class="mobile-theme-btn" onclick="toggleTheme()">
+        <i id="mobileThemeIcon" data-lucide="moon"></i>
+        <span id="mobileThemeLabel">Dark</span>
+    </button>
+
     <script>
         lucide.createIcons();
         if (typeof math !== 'undefined') {
@@ -308,12 +336,18 @@
             localStorage.setItem('theme', theme);
             const icon = document.getElementById('themeIcon');
             const label = document.getElementById('themeLabel');
+            const mobileIcon = document.getElementById('mobileThemeIcon');
+            const mobileLabel = document.getElementById('mobileThemeLabel');
             if (theme === 'dark') {
                 icon.setAttribute('data-lucide', 'sun');
                 label.textContent = 'Light Appearance';
+                if (mobileIcon) mobileIcon.setAttribute('data-lucide', 'sun');
+                if (mobileLabel) mobileLabel.textContent = 'Light';
             } else {
                 icon.setAttribute('data-lucide', 'moon');
                 label.textContent = 'Dark Appearance';
+                if (mobileIcon) mobileIcon.setAttribute('data-lucide', 'moon');
+                if (mobileLabel) mobileLabel.textContent = 'Dark';
             }
             lucide.createIcons();
         }

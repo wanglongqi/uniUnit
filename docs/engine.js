@@ -13,12 +13,18 @@ function setTheme(theme) {
   localStorage.setItem('theme', theme);
   const icon = document.getElementById('themeIcon');
   const label = document.getElementById('themeLabel');
+  const mobileIcon = document.getElementById('mobileThemeIcon');
+  const mobileLabel = document.getElementById('mobileThemeLabel');
   if (theme === 'dark') {
     icon.setAttribute('data-lucide', 'sun');
     label.textContent = 'Light Appearance';
+    if (mobileIcon) mobileIcon.setAttribute('data-lucide', 'sun');
+    if (mobileLabel) mobileLabel.textContent = 'Light';
   } else {
     icon.setAttribute('data-lucide', 'moon');
     label.textContent = 'Dark Appearance';
+    if (mobileIcon) mobileIcon.setAttribute('data-lucide', 'moon');
+    if (mobileLabel) mobileLabel.textContent = 'Dark';
   }
   if (window.lucide) lucide.createIcons();
 }

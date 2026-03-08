@@ -17,6 +17,25 @@
 </head>
 
 <body>
+	<!-- Mobile Header -->
+	<div class="mobile-header">
+		<img src="logo.png" alt="Logo">
+		<span>uniUnit</span>
+	</div>
+
+	<!-- Mobile Navigation -->
+	<div class="mobile-nav">
+		<button class="nav-link active" onclick="showTab('simple', this)">
+			<i data-lucide="zap"></i> Quick Tool
+		</button>
+		<button class="nav-link" onclick="showTab('system', this)">
+			<i data-lucide="layout-grid"></i> Mapping
+		</button>
+		<button class="nav-link" onclick="showTab('presets', this)">
+			<i data-lucide="layers"></i> Presets
+		</button>
+	</div>
+
 	<div class="layout">
 		<aside class="sidebar">
 			<div class="logo">
@@ -160,6 +179,12 @@
 			</div>
 		</main>
 	</div>
+
+	<!-- Mobile Theme Toggle -->
+	<button class="mobile-theme-btn" onclick="toggleTheme()">
+		<i id="mobileThemeIcon" data-lucide="moon"></i>
+		<span id="mobileThemeLabel">Dark</span>
+	</button>
 
 	<script src="https://unpkg.com/mathjs@14.0.1/lib/browser/math.js"></script>
 	<script src="engine.js"></script>
