@@ -1,6 +1,41 @@
 if (window.lucide) lucide.createIcons();
 if (typeof math !== 'undefined') {
-  try { math.createUnit('T', '1000 kg', { override: true }); } catch (e) { }
+  try {
+    math.createUnit('T', '1000 kg', { override: true });
+    math.createUnit('ton', '907.185 kg', { override: true });
+    math.createUnit('long_ton', '1016.05 kg', { override: true });
+    math.createUnit('stone', '6.35029 kg', { override: true });
+    math.createUnit('oz', '28.3495 g', { override: true });
+    math.createUnit('nautical_mile', '1852 m', { override: true });
+    math.createUnit('ly', '9.46073e15 m', { override: true });
+    math.createUnit('au', '1.49598e11 m', { override: true });
+    math.createUnit('pc', '3.08568e16 m', { override: true });
+    math.createUnit('angstrom', '1e-10 m', { override: true });
+    math.createUnit('um', '1e-6 m', { override: true });
+    math.createUnit('degC', '1 degC', { override: true });
+    math.createUnit('degF', '1 degF', { override: true });
+    math.createUnit('psi', '6894.76 Pa', { override: true });
+    math.createUnit('torr', '133.322 Pa', { override: true });
+    math.createUnit('mmHg', '133.322 Pa', { override: true });
+    math.createUnit('lbf', '4.44822 N', { override: true });
+    math.createUnit('dyn', '1e-5 N', { override: true });
+    math.createUnit('kcal', '4184 J', { override: true });
+    math.createUnit('eV', '1.60218e-19 J', { override: true });
+    math.createUnit('erg', '1e-7 J', { override: true });
+    math.createUnit('Wh', '3600 J', { override: true });
+    math.createUnit('kWh', '3.6e6 J', { override: true });
+    math.createUnit('hp', '745.7 W', { override: true });
+    math.createUnit('rad/s', '1 rad/s', { override: true });
+    math.createUnit('km/h', '0.277778 m/s', { override: true });
+    math.createUnit('mph', '0.44704 m/s', { override: true });
+    math.createUnit('ha', '10000 m^2', { override: true });
+    math.createUnit('acre', '4046.86 m^2', { override: true });
+    math.createUnit('ml', '1e-6 m^3', { override: true });
+    math.createUnit('gal', '0.00378541 m^3', { override: true });
+    math.createUnit('qt', '0.000946353 m^3', { override: true });
+    math.createUnit('arcmin', '0.0166667 deg', { override: true });
+    math.createUnit('arcsec', '0.000277778 deg', { override: true });
+  } catch (e) { console.warn('Unit creation failed:', e); }
 }
 
 function initTheme() {
