@@ -37,6 +37,8 @@ ureg.define("light_second = 299792458 * meter = ls")
 ureg.define("light_minute = 60 * light_second = lmin")
 ureg.define("light_hour = 60 * light_minute = lh")
 ureg.define("light_day = 24 * light_hour = lday")
+ureg.define("jin = 0.5 * kilogram")
+ureg.define("liang = 0.05 * kilogram")
 
 # Add Chinese unit aliases
 CHINESE_UNITS = {
