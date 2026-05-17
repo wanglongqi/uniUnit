@@ -1,1 +1,11 @@
 *.pyc
+node_modules/
+.DS_Store
+debug_*.html
+debug_*.png
+result_*.png
+ui_*.png
+test_results.json
+tests_js_alignment.json
+*.pycache/
+__pycache__/

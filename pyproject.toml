@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "uniunit"
+version = "1.0.0"
+description = "Consistent units manager for Python"
+readme = "README.md"
+authors = [{name = "WANG Longqi", email = "iqgnol@gmail.com"}]
+license = {text = "MIT"}
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+]
+dependencies = [
+    "pint",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["uniunit*"]
