@@ -4,12 +4,41 @@
   <img src="logo.png" alt="uniUnit Logo" width="200">
 </p>
 
-[English](#english) | [中文](#中文)
+<p align="center">
+  <strong>Consistent units manager for Python and the Browser.</strong>
+</p>
 
 ---
 
-## English
+## Overview
 
+`uniUnit` is a powerful and flexible library for converting between different unit systems effortlessly. Whether you are working on engineering simulations (FEM), scientific research, or astronomical calculations, `uniUnit` ensures that your units remain consistent across all your computations.
+
+### Key Features
+
+*   🚀 **Zero-Latency Conversion**: Internal caching for high-performance applications.
+*   🛠️ **Flexible Mapping**: Define custom unit systems with simple dictionaries.
+*   📦 **Rich Presets**: Built-in support for SI, CGS, MKS, Imperial, and common FEM systems.
+*   🌏 **i18n Support**: First-class support for Chinese unit names.
+*   🧪 **NumPy Integration**: Native support for NumPy arrays and batch processing.
+*   🌐 **Web Dashboard**: Includes a client-side browser engine and a FastAPI backend.
+
+---
+
+## Quick Navigation
+
+*   👉 **[Getting Started](getting-started.md)**: Install the library and run your first conversion in 2 minutes.
+*   📖 **[User Guide](user-guide.md)**: Deep dive into advanced features, custom units, and engineering workflows.
+*   🛠️ **[API Reference](api.md)**: Detailed technical documentation for all classes and functions.
+*   💻 **[Web & API](demo.md)**: Learn about the interactive browser dashboard and FastAPI endpoints.
+
+---
+
+[English](#english-readme) | [中文](#中文-readme)
+
+## English README
+
+*(The original README content continues below...)*
 ### What is uniUnit?
 
 uniUnit is a simple Python library for converting between different unit systems effortlessly. It's especially useful for engineering calculations and simulations (like FEM) where maintaining unit consistency is crucial.

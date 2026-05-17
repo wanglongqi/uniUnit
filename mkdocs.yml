@@ -37,8 +37,10 @@ plugins:
 
 nav:
   - Home: index.md
+  - Getting Started: getting-started.md
+  - User Guide: user-guide.md
   - API Reference: api.md
-  - Web Demo: demo.md
+  - Web & API: demo.md
 
 markdown_extensions:
   - pymdownx.highlight:
