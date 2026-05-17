@@ -14,9 +14,6 @@ Functions:
     get_base_unit - return units in seven basic SI units system
     convert - quick conversion between unit systems
     create_custom_unit - create a custom unit definition
-
-:Author: WANG Longqi <iqgnol@gmail.com>
-:Date: 2014-11-27
 """
 
 from __future__ import annotations
