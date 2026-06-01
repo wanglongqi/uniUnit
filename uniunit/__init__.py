@@ -10,7 +10,7 @@ Read README.md for more information.
 :Date: 2014-11-27
 """
 
-__version__ = '0.2'
+__version__ = '1.0.0'
 
 import pint
 from pint import UnitRegistry, Quantity
