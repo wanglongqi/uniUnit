@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "uniunit"
-version = "1.0.2"
+version = "1.0.3"
 description = "Consistent units manager for Python"
 readme = "README.md"
 license = {text = "MIT"}
@@ -15,6 +15,10 @@ classifiers = [
 dependencies = [
     "pint",
 ]
+
+[project.urls]
+Homepage = "https://github.com/wanglongqi/uniUnit"
+Repository = "https://github.com/wanglongqi/uniUnit"
 
 [tool.setuptools.packages.find]
 where = ["."]

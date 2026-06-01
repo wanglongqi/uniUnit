@@ -8,7 +8,7 @@ Read README.md for more information.
 
 """
 
-__version__ = '1.0.2'
+__version__ = '1.0.3'
 
 import pint
 from pint import UnitRegistry, Quantity
