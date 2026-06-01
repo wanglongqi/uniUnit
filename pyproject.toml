@@ -4,10 +4,9 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "uniunit"
-version = "1.0.1"
+version = "1.0.2"
 description = "Consistent units manager for Python"
 readme = "README.md"
-authors = [{name = "wanglongqi"}]
 license = {text = "MIT"}
 classifiers = [
     "Programming Language :: Python :: 3",

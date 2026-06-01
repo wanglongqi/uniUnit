@@ -6,11 +6,9 @@ Consistent units manager.
 
 Read README.md for more information.
 
-:Author: WANG Longqi <iqgnol@gmail.com>
-:Date: 2014-11-27
 """
 
-__version__ = '1.0.1'
+__version__ = '1.0.2'
 
 import pint
 from pint import UnitRegistry, Quantity
